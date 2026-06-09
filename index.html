@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Prompt Studio</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --surface-2: #eef4ff;
+      --text: #172033;
+      --muted: #61708a;
+      --line: #d9e2f1;
+      --primary: #2346a0;
+      --primary-2: #315bd6;
+      --indigo: #4c3fb3;
+      --accent: #00a7b5;
+      --success: #087f5b;
+      --warning: #b7791f;
+      --shadow: 0 18px 45px rgba(32, 54, 104, 0.12);
+      --shadow-soft: 0 10px 28px rgba(32, 54, 104, 0.08);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    body.menu-open {
+      overflow: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .skip-link {
+      background: var(--primary);
+      color: #fff;
+      left: 16px;
+      padding: 10px 14px;
+      position: fixed;
+      top: -60px;
+      z-index: 10000;
+    }
+
+    .skip-link:focus {
+      top: 16px;
+    }
+
+    .topbar {
+      backdrop-filter: blur(18px);
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid rgba(217, 226, 241, 0.9);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav-wrap {
+      align-items: center;
+      display: flex;
+      gap: 18px;
+      justify-content: space-between;
+      margin: 0 auto;
+      max-width: var(--max);
+      min-height: 88px;
+      padding: 0 22px;
+    }
+
+    .brand {
+      align-items: center;
+      display: inline-flex;
+      gap: 14px;
+      font-weight: 800;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      align-items: center;
+      background: #071329;
+      border: 1px solid rgba(0, 167, 181, 0.28);
+      border-radius: 999px;
+      box-shadow: 0 8px 24px rgba(35, 70, 160, 0.22);
+      display: inline-flex;
+      height: 72px;
+      justify-content: center;
+      overflow: hidden;
+      width: 72px;
+    }
+
+    .brand-mark img {
+      display: block;
+      height: 100%;
+      object-fit: contain;
+      width: 100%;
+    }
+
+    .brand-text {
+      font-size: 1.08rem;
+    }
+
+    .nav-links {
+      align-items: center;
+      display: flex;
+      flex: 1;
+      gap: 4px;
+      justify-content: center;
+    }
+
+    .nav-link {
+      border-radius: 999px;
+      color: #31415d;
+      font-size: 0.93rem;
+      font-weight: 700;
+      padding: 9px 12px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .nav-link:hover,
+    .nav-link:focus-visible {
+      background: #e7efff;
+      color: var(--primary);
+    }
+
+    .nav-actions {
+      align-items: center;
+      display: flex;
+      gap: 10px;
+    }
+
+    .lang-toggle {
+      background: #edf3ff;
+      border: 1px solid #d2def5;
+      border-radius: 999px;
+      display: flex;
+      padding: 4px;
+    }
+
+    .lang-button {
+      background: transparent;
+      border: 0;
+      border-radius: 999px;
+      color: #526174;
+      font-weight: 800;
+      min-width: 42px;
+      padding: 7px 10px;
+    }
+
+    .lang-button.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(35, 70, 160, 0.25);
+    }
+
+    .mobile-toggle {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: none;
+      height: 42px;
+      width: 42px;
+    }
+
+    .mobile-toggle span,
+    .mobile-toggle span::before,
+    .mobile-toggle span::after {
+      background: var(--text);
+      border-radius: 999px;
+      content: "";
+      display: block;
+      height: 2px;
+      margin: 0 auto;
+      position: relative;
+      width: 18px;
+    }
+
+    .mobile-toggle span::before {
+      position: absolute;
+      top: -6px;
+    }
+
+    .mobile-toggle span::after {
+      position: absolute;
+      top: 6px;
+    }
+
+    .section {
+      padding: 78px 22px;
+    }
+
+    .section.alt {
+      background: #fff;
+    }
+
+    .container {
+      margin: 0 auto;
+      max-width: var(--max);
+    }
+
+    .hero {
+      background:
+        radial-gradient(circle at 10% 20%, rgba(0, 167, 181, 0.26), transparent 34%),
+        radial-gradient(circle at 82% 5%, rgba(255, 255, 255, 0.28), transparent 26%),
+        linear-gradient(135deg, #162f7c 0%, #315bd6 52%, #4c3fb3 100%);
+      color: #fff;
+      overflow: hidden;
+      padding: 84px 22px 44px;
+      position: relative;
+    }
+
+    .hero-grid {
+      align-items: center;
+      display: grid;
+      gap: 36px;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      margin: 0 auto;
+      max-width: var(--max);
+    }
+
+    .eyebrow {
+      align-items: center;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 0.9rem;
+      font-weight: 800;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 8px 12px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 5.1rem);
+      line-height: 0.98;
+      margin: 0 0 18px;
+      letter-spacing: 0;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.3rem, 3vw, 2.15rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin: 0 0 16px;
+      max-width: 780px;
+    }
+
+    .hero-description {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 1.08rem;
+      max-width: 740px;
+      margin: 0 0 26px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      display: inline-flex;
+      font-weight: 800;
+      gap: 8px;
+      justify-content: center;
+      min-height: 46px;
+      padding: 12px 18px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: 0 14px 26px rgba(0, 0, 0, 0.18);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.35);
+      color: #fff;
+    }
+
+    .hero-panel {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 26px;
+      box-shadow: 0 30px 80px rgba(7, 18, 56, 0.32);
+      padding: 24px;
+    }
+
+    .hero-panel-title {
+      font-size: 0.95rem;
+      font-weight: 900;
+      margin: 0 0 14px;
+      text-transform: uppercase;
+    }
+
+    .prompt-preview {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 18px;
+      color: #172033;
+      padding: 18px;
+    }
+
+    .preview-line {
+      border-bottom: 1px solid #e3e9f5;
+      padding: 11px 0;
+    }
+
+    .preview-line:last-child {
+      border-bottom: 0;
+    }
+
+    .benefits {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(3, 1fr);
+      margin: 42px auto 0;
+      max-width: var(--max);
+    }
+
+    .benefit-card,
+    .card,
+    .tool-card,
+    .safety-card,
+    .step-card,
+    .reminder-card {
+      background: var(--surface);
+      border: 1px solid rgba(217, 226, 241, 0.92);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .benefit-card {
+      color: var(--text);
+      padding: 22px;
+    }
+
+    .benefit-icon,
+    .card-icon {
+      align-items: center;
+      background: #eaf2ff;
+      border-radius: 14px;
+      color: var(--primary);
+      display: inline-flex;
+      font-size: 1.35rem;
+      height: 44px;
+      justify-content: center;
+      margin-bottom: 12px;
+      width: 44px;
+    }
+
+    .benefit-card h3,
+    .card h3,
+    .tool-card h3 {
+      margin: 0 0 8px;
+    }
+
+    .benefit-card p,
+    .card p,
+    .tool-card p,
+    .safety-card p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .section-heading {
+      margin-bottom: 28px;
+      max-width: 780px;
+    }
+
+    .section-kicker {
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      margin: 0 0 8px;
+      text-transform: uppercase;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      line-height: 1.05;
+      margin: 0 0 14px;
+      letter-spacing: 0;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 1.06rem;
+      margin: 0;
+    }
+
+    .point-grid,
+    .steps-grid,
+    .safety-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .card,
+    .step-card,
+    .safety-card {
+      padding: 22px;
+    }
+
+    .step-number {
+      align-items: center;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 999px;
+      color: #fff;
+      display: inline-flex;
+      font-weight: 900;
+      height: 36px;
+      justify-content: center;
+      margin-bottom: 12px;
+      width: 36px;
+    }
+
+    .reminder-card {
+      align-items: flex-start;
+      background: #fff8e8;
+      border-color: #f2d59a;
+      display: flex;
+      gap: 14px;
+      margin-top: 20px;
+      padding: 22px;
+    }
+
+    .reminder-card strong {
+      color: #7a4b05;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .formula-box {
+      background: linear-gradient(135deg, #eef4ff, #ffffff);
+      border: 1px solid #d8e4fb;
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .formula-text {
+      color: var(--primary);
+      font-size: clamp(1.35rem, 3vw, 2.1rem);
+      font-weight: 900;
+      line-height: 1.25;
+      margin: 0 0 18px;
+    }
+
+    .code-box,
+    .prompt-body {
+      background: #0f1b33;
+      border-radius: 16px;
+      color: #e8eefc;
+      font-family: "Cascadia Mono", Consolas, monospace;
+      font-size: 0.92rem;
+      overflow-x: auto;
+      padding: 18px;
+      white-space: pre-wrap;
+    }
+
+    .library-header {
+      align-items: end;
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .controls {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      gap: 14px;
+      grid-template-columns: minmax(240px, 1fr) minmax(220px, 320px);
+      margin-bottom: 22px;
+      padding: 16px;
+    }
+
+    .field label {
+      color: #43516a;
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .field input,
+    .field select {
+      background: #f8fbff;
+      border: 1px solid #cfd9ea;
+      border-radius: 12px;
+      color: var(--text);
+      min-height: 46px;
+      padding: 10px 12px;
+      width: 100%;
+    }
+
+    .result-row {
+      align-items: center;
+      color: var(--muted);
+      display: flex;
+      font-weight: 800;
+      justify-content: space-between;
+      margin: 0 0 16px;
+    }
+
+    .template-grid,
+    .tools-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .prompt-card,
+    .eval-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .prompt-card:hover,
+    .eval-card:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+    }
+
+    .prompt-card-inner,
+    .eval-card-inner {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 14px;
+      padding: 20px;
+    }
+
+    .badge {
+      align-self: flex-start;
+      background: #eaf2ff;
+      border: 1px solid #cfddf8;
+      border-radius: 999px;
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 900;
+      padding: 6px 10px;
+    }
+
+    .meta-block {
+      border-top: 1px solid #edf1f7;
+      padding-top: 12px;
+    }
+
+    .meta-label {
+      color: #2c3b56;
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 900;
+      margin-bottom: 3px;
+    }
+
+    .meta-block p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .prompt-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .mini-btn {
+      align-items: center;
+      background: var(--primary);
+      border: 0;
+      border-radius: 12px;
+      color: #fff;
+      display: inline-flex;
+      font-weight: 900;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 12px;
+    }
+
+    .mini-btn.secondary {
+      background: #eef4ff;
+      color: var(--primary);
+    }
+
+    .prompt-body {
+      display: none;
+      margin-top: 6px;
+      max-height: 360px;
+    }
+
+    .prompt-card.expanded .prompt-body,
+    .eval-card.expanded .prompt-body {
+      display: block;
+    }
+
+    .empty-state {
+      background: #fff;
+      border: 1px dashed #bdc9dd;
+      border-radius: 20px;
+      color: var(--muted);
+      display: none;
+      font-weight: 800;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .empty-state.visible {
+      display: block;
+    }
+
+    .safety-intro {
+      background: linear-gradient(135deg, #fff, #eef8fb);
+      border: 1px solid #ccecf0;
+      border-radius: 24px;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 20px;
+      padding: 24px;
+    }
+
+    .footer {
+      background: #101a31;
+      color: #d9e5ff;
+      padding: 34px 22px;
+    }
+
+    .footer .container {
+      display: flex;
+      gap: 18px;
+      justify-content: space-between;
+    }
+
+    .footer h2 {
+      color: #fff;
+      margin: 0 0 8px;
+    }
+
+    .footer p {
+      margin: 0;
+      max-width: 680px;
+    }
+
+    .toast {
+      background: #0f1b33;
+      border-radius: 999px;
+      bottom: 22px;
+      box-shadow: var(--shadow);
+      color: #fff;
+      font-weight: 900;
+      left: 50%;
+      opacity: 0;
+      padding: 12px 18px;
+      pointer-events: none;
+      position: fixed;
+      transform: translate(-50%, 20px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 1200;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    :focus-visible {
+      outline: 3px solid #ffcf4d;
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 1040px) {
+      .nav-links {
+        background: rgba(255, 255, 255, 0.98);
+        border-bottom: 1px solid var(--line);
+        box-shadow: var(--shadow-soft);
+        display: none;
+        flex-direction: column;
+        gap: 2px;
+        left: 0;
+        padding: 14px 22px 20px;
+        position: fixed;
+        right: 0;
+        top: 88px;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-link {
+        width: 100%;
+      }
+
+      .mobile-toggle {
+        align-items: center;
+        display: inline-flex;
+        justify-content: center;
+      }
+
+      .hero-grid,
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .template-grid,
+      .tools-grid,
+      .point-grid,
+      .steps-grid,
+      .safety-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav-wrap {
+      min-height: 82px;
+        padding: 0 14px;
+      }
+
+      .brand-mark {
+        height: 60px;
+        width: 60px;
+      }
+
+      .brand-text {
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .hero {
+        padding-top: 58px;
+      }
+
+      .hero-grid,
+      .benefits,
+      .template-grid,
+      .tools-grid,
+      .point-grid,
+      .steps-grid,
+      .safety-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel {
+        padding: 16px;
+      }
+
+      .section {
+        padding: 54px 16px;
+      }
+
+      .library-header,
+      .result-row,
+      .footer .container {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .prompt-actions,
+      .button-row {
+        flex-direction: column;
+      }
+
+      .btn,
+      .mini-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <div class="nav-wrap">
+      <a class="brand" href="#home" aria-label="AI Prompt Studio">
+        <span class="brand-mark"><img src="images/logo.png" alt="AI Prompt Studio logo" /></span>
+        <span class="brand-text">AI Prompt Studio</span>
+      </a>
+      <nav class="nav-links" id="navLinks" aria-label="Primary navigation"></nav>
+      <div class="nav-actions">
+        <div class="lang-toggle" aria-label="Language">
+          <button class="lang-button active" type="button" data-lang="bm">BM</button>
+          <button class="lang-button" type="button" data-lang="en">EN</button>
+        </div>
+        <button class="mobile-toggle" id="mobileToggle" type="button" aria-label="Open menu" aria-expanded="false">
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="home">
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow" id="heroEyebrow"></p>
+          <h1 id="heroTitle"></h1>
+          <p class="hero-subtitle" id="heroSubtitle"></p>
+          <p class="hero-description" id="heroDescription"></p>
+          <div class="button-row">
+            <a class="btn primary" href="#templates" id="heroPrimary"></a>
+            <a class="btn secondary" href="#formula" id="heroSecondary"></a>
+          </div>
+        </div>
+        <div class="hero-panel" aria-label="Prompt formula preview">
+          <p class="hero-panel-title" id="previewTitle"></p>
+          <div class="prompt-preview" id="heroPreview"></div>
+        </div>
+      </div>
+      <div class="benefits" id="benefits"></div>
+    </section>
+
+    <section class="section alt" id="why">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker" id="whyKicker"></p>
+          <h2 id="whyTitle"></h2>
+          <p id="whyIntro"></p>
+        </div>
+        <div class="point-grid" id="whyPoints"></div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker" id="howKicker"></p>
+          <h2 id="howTitle"></h2>
+        </div>
+        <div class="steps-grid" id="steps"></div>
+        <div class="reminder-card">
+          <div class="card-icon">!</div>
+          <div>
+            <strong id="reminderTitle"></strong>
+            <p id="reminderText"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="formula">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker" id="formulaKicker"></p>
+          <h2 id="formulaTitle"></h2>
+          <p id="formulaIntro"></p>
+        </div>
+        <div class="formula-box">
+          <p class="formula-text" id="formulaText"></p>
+          <pre class="code-box" id="formulaExample"></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="templates">
+      <div class="container">
+        <div class="library-header">
+          <div class="section-heading">
+            <p class="section-kicker" id="templatesKicker"></p>
+            <h2 id="templatesTitle"></h2>
+            <p id="templatesIntro"></p>
+          </div>
+        </div>
+        <div class="controls">
+          <div class="field">
+            <label for="searchInput" id="searchLabel"></label>
+            <input id="searchInput" type="search" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="categoryFilter" id="filterLabel"></label>
+            <select id="categoryFilter"></select>
+          </div>
+        </div>
+        <div class="result-row">
+          <span id="resultCount" aria-live="polite"></span>
+          <span id="totalCount"></span>
+        </div>
+        <div class="template-grid" id="templateGrid"></div>
+        <div class="empty-state" id="emptyState"></div>
+      </div>
+    </section>
+
+    <section class="section alt" id="review">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker" id="reviewKicker"></p>
+          <h2 id="reviewTitle"></h2>
+          <p id="reviewIntro"></p>
+        </div>
+        <div class="tools-grid" id="reviewTools"></div>
+      </div>
+    </section>
+
+    <section class="section" id="safe">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker" id="safeKicker"></p>
+          <h2 id="safeTitle"></h2>
+        </div>
+        <div class="safety-intro" id="safeIntro"></div>
+        <div class="safety-grid" id="safeCards"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div>
+        <h2>AI Prompt Studio</h2>
+        <p id="footerText"></p>
+      </div>
+      <p id="footerYear"></p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const categories = [
+      { id: 'all', bm: 'Semua', en: 'All' },
+      { id: 'communication', bm: 'Komunikasi', en: 'Communication' },
+      { id: 'hr', bm: 'HR dan Pengambilan', en: 'HR and Recruitment' },
+      { id: 'learning', bm: 'Kurikulum dan Pembelajaran', en: 'Curriculum and Learning' },
+      { id: 'operations', bm: 'Operasi dan Produktiviti', en: 'Operations and Productivity' },
+      { id: 'sales', bm: 'Jualan dan Pemasaran', en: 'Sales and Marketing' },
+      { id: 'analysis', bm: 'Analisis dan Pelaporan', en: 'Analysis and Reporting' },
+      { id: 'risk', bm: 'Risiko, Pematuhan dan Strategi', en: 'Risk, Compliance and Strategy' },
+      { id: 'vibe', bm: 'Vibe Coding dan Aplikasi', en: 'Vibe Coding and Apps' }
+    ];
+
+    const ui = {
+      bm: {
+        nav: [
+          ['home', 'Utama'],
+          ['why', 'Kenapa Prompt Penting'],
+          ['how', 'Cara Guna'],
+          ['formula', 'Formula Prompt'],
+          ['templates', 'Template'],
+          ['review', 'Semak Prompt'],
+          ['safe', 'Amalan Selamat']
+        ],
+        heroEyebrow: 'Portal rujukan anda untuk penggunaan AI harian',
+        heroTitle: 'AI Prompt Studio',
+        heroSubtitle: 'Tulis prompt lebih jelas. Dapatkan jawapan AI lebih relevan.',
+        heroDescription: 'Selamat datang ke AI Prompt Studio — pusat rujukan ringkas untuk membantu anda menulis prompt AI yang lebih jelas, lengkap dan berkesan. Pilih template, isi maklumat penting, salin prompt, dan gunakan dengan mana-mana alat AI pilihan anda.',
+        heroPrimary: 'Teroka Template',
+        heroSecondary: 'Belajar Formula Prompt',
+        previewTitle: 'Contoh struktur prompt',
+        preview: ['Peranan: Anda ialah pembantu profesional.', 'Tugasan: Ringkaskan maklumat berikut.', 'Format: Jadual + tindakan susulan.', 'Peraturan: Jangan cipta maklumat.'],
+        benefits: [
+          ['Lebih Jelas', 'Kurangkan kekeliruan dalam arahan kepada AI.'],
+          ['Lebih Cepat', 'Guna template siap untuk tugasan harian.'],
+          ['Lebih Selamat', 'Ingatkan staf supaya tidak berkongsi maklumat sulit.']
+        ],
+        whyKicker: 'Asas penggunaan AI',
+        whyTitle: 'Kenapa Prompt Yang Baik Penting?',
+        whyIntro: 'Prompt yang baik membantu AI memahami tugasan dengan lebih tepat. Ia bukan sekadar bertanya soalan, tetapi memberi arahan kerja yang jelas, lengkap dan tersusun.',
+        whyPoints: [
+          'Arahan yang jelas mengurangkan salah faham.',
+          'Konteks yang cukup membantu AI memberi jawapan lebih tepat.',
+          'Format output yang ditetapkan menjimatkan masa.',
+          'Peraturan dan had membantu mengurangkan jawapan yang tidak relevan.',
+          'Semakan akhir membantu staf menilai sama ada jawapan AI sesuai digunakan.',
+          'Prompt yang baik membantu penggunaan AI secara lebih selamat dan bertanggungjawab.'
+        ],
+        howKicker: 'Mula dengan yakin',
+        howTitle: 'Cara Guna AI Prompt Studio',
+        steps: [
+          'Pilih template yang sesuai dengan tugasan anda.',
+          'Gantikan teks dalam [kurungan] dengan maklumat sebenar.',
+          'Tambah konteks yang mencukupi.',
+          'Pilih format jawapan yang anda mahu.',
+          'Salin prompt dan tampal ke alat AI pilihan anda.',
+          'Semak jawapan AI sebelum digunakan.',
+          'Baiki prompt jika jawapan pertama kurang sesuai.'
+        ],
+        reminderTitle: 'Ingat:',
+        reminderText: 'Jangan masukkan maklumat sulit, kata laluan, data peribadi sensitif, atau maklumat pelanggan tanpa kebenaran.',
+        formulaKicker: 'Rangka mudah',
+        formulaTitle: 'Formula Prompt Yang Berkesan',
+        formulaIntro: 'Gunakan formula ini apabila anda mahu menulis prompt sendiri tanpa template.',
+        formulaText: 'Peranan + Tugasan + Konteks + Format Jawapan + Peraturan + Semakan Kualiti',
+        formulaExample: 'Anda ialah [peranan].\nTugas anda ialah [tugasan].\nGunakan konteks berikut: [konteks].\nBerikan jawapan dalam format [format].\nIkut peraturan berikut: [peraturan].\nSebelum selesai, semak [kriteria kualiti].',
+        templatesKicker: 'Perpustakaan prompt',
+        templatesTitle: 'Template Prompt Untuk Tugasan Harian',
+        templatesIntro: 'Cari, tapis, buka, dan salin template yang sesuai untuk kerja anda.',
+        searchLabel: 'Cari',
+        filterLabel: 'Kategori',
+        searchPlaceholder: 'Cari template prompt...',
+        totalTemplates: (count) => `${count} template tersedia`,
+        noResults: 'Tiada template ditemui.',
+        resultCount: (count) => `${count} template sepadan`,
+        labels: {
+          purpose: 'Tujuan',
+          when: 'Bila Digunakan',
+          inputs: 'Input Diperlukan',
+          prompt: 'Template Prompt',
+          example: 'Contoh Kegunaan',
+          copy: 'Salin Prompt',
+          show: 'Tunjuk Prompt',
+          hide: 'Sembunyi Prompt',
+          copied: 'Prompt disalin!'
+        },
+        reviewKicker: 'Kualiti prompt',
+        reviewTitle: 'Semak dan Baiki Prompt Anda',
+        reviewIntro: 'Gunakan alat semakan ini untuk menilai prompt, output AI, dan cara menambah baik arahan anda.',
+        safeKicker: 'Tanggungjawab staf',
+        safeTitle: 'Amalan Selamat Menggunakan AI',
+        safeIntro: 'Sentiasa semak jawapan AI sebelum digunakan. Jangan masukkan maklumat sulit, data peribadi sensitif, kata laluan, atau maklumat pelanggan tanpa kebenaran. AI boleh membuat kesilapan. Gunakan pertimbangan profesional sebelum menggunakan sebarang output.',
+        safeCards: [
+          'Semak sebelum guna',
+          'Jangan kongsi maklumat sulit',
+          'Gunakan pertimbangan profesional',
+          'Dapatkan semakan untuk perkara penting',
+          'AI membantu, bukan menggantikan tanggungjawab manusia'
+        ],
+        footerText: 'Panduan ini disediakan untuk membantu staf menggunakan AI dengan lebih jelas, selamat dan berkesan. Sentiasa semak output AI sebelum digunakan.',
+        year: (year) => `© ${year} AI Prompt Studio`
+      },
+      en: {
+        nav: [
+          ['home', 'Home'],
+          ['why', 'Why Prompting Matters'],
+          ['how', 'How to Use'],
+          ['formula', 'Prompt Formula'],
+          ['templates', 'Templates'],
+          ['review', 'Prompt Review'],
+          ['safe', 'Safe AI Use']
+        ],
+        heroEyebrow: 'Staff reference portal for everyday AI use',
+        heroTitle: 'AI Prompt Studio',
+        heroSubtitle: 'Write clearer prompts. Get more useful AI responses.',
+        heroDescription: 'Welcome to AI Prompt Studio — a simple reference hub to help staff write clearer, more complete, and more effective AI prompts. Choose a template, fill in the key details, copy the prompt, and use it with any AI tool of your choice.',
+        heroPrimary: 'Explore Templates',
+        heroSecondary: 'Learn Prompt Formula',
+        previewTitle: 'Prompt structure example',
+        preview: ['Role: You are a professional assistant.', 'Task: Summarize the following information.', 'Format: Table + follow-up actions.', 'Rules: Do not invent information.'],
+        benefits: [
+          ['Clearer', 'Reduce confusion in AI instructions.'],
+          ['Faster', 'Use ready-made templates for daily tasks.'],
+          ['Safer', 'Remind staff not to share confidential information.']
+        ],
+        whyKicker: 'AI use basics',
+        whyTitle: 'Why Good Prompting Matters',
+        whyIntro: 'A good prompt helps AI understand the task more accurately. Prompting is not just asking a question; it is giving clear, complete, and structured work instructions.',
+        whyPoints: [
+          'Clear instructions reduce misunderstanding.',
+          'Enough context helps AI produce more accurate responses.',
+          'Defined output formats save time.',
+          'Rules and constraints reduce irrelevant answers.',
+          'Final checks help staff decide whether the AI response is suitable to use.',
+          'Good prompting supports safer and more responsible AI use.'
+        ],
+        howKicker: 'Start with confidence',
+        howTitle: 'How to Use AI Prompt Studio',
+        steps: [
+          'Choose a template that matches your task.',
+          'Replace the text in [brackets] with your actual information.',
+          'Add enough context.',
+          'Choose the response format you want.',
+          'Copy the prompt and paste it into your preferred AI tool.',
+          'Review the AI response before using it.',
+          'Improve the prompt if the first response is not good enough.'
+        ],
+        reminderTitle: 'Reminder:',
+        reminderText: 'Do not enter confidential information, passwords, sensitive personal data, or customer information without permission.',
+        formulaKicker: 'Simple framework',
+        formulaTitle: 'Effective Prompt Formula',
+        formulaIntro: 'Use this formula when you want to write your own prompt without a template.',
+        formulaText: 'Role + Task + Context + Output Format + Rules + Quality Check',
+        formulaExample: 'You are a [role].\nYour task is to [task].\nUse this context: [context].\nReturn the answer in this format: [format].\nFollow these rules: [rules].\nBefore finalizing, check for [quality criteria].',
+        templatesKicker: 'Prompt library',
+        templatesTitle: 'Prompt Templates for Daily Work',
+        templatesIntro: 'Search, filter, open, and copy templates that fit your task.',
+        searchLabel: 'Search',
+        filterLabel: 'Category',
+        searchPlaceholder: 'Search prompt templates...',
+        totalTemplates: (count) => `${count} templates available`,
+        noResults: 'No templates found.',
+        resultCount: (count) => `${count} matching template${count === 1 ? '' : 's'}`,
+        labels: {
+          purpose: 'Purpose',
+          when: 'When to Use',
+          inputs: 'Required Inputs',
+          prompt: 'Prompt Template',
+          example: 'Example Use Case',
+          copy: 'Copy Prompt',
+          show: 'Show Prompt',
+          hide: 'Hide Prompt',
+          copied: 'Prompt copied!'
+        },
+        reviewKicker: 'Prompt quality',
+        reviewTitle: 'Review and Improve Your Prompt',
+        reviewIntro: 'Use these review tools to assess prompts, AI outputs, and ways to improve your instructions.',
+        safeKicker: 'Staff responsibility',
+        safeTitle: 'Safe and Responsible AI Use',
+        safeIntro: 'Always review AI-generated responses before use. Do not enter confidential information, sensitive personal data, passwords, or customer information without permission. AI can make mistakes. Use professional judgment before using any output.',
+        safeCards: [
+          'Review before use',
+          'Do not share confidential information',
+          'Use professional judgment',
+          'Get review for important matters',
+          'AI supports work but does not replace human responsibility'
+        ],
+        footerText: 'This guide is designed to help staff use AI more clearly, safely, and effectively. Always review AI output before use.',
+        year: (year) => `© ${year} AI Prompt Studio`
+      }
+    };
+
+    function promptRules(lang, useOnlyProvided = false) {
+      if (lang === 'bm') {
+        return [
+          'Jangan cipta maklumat.',
+          'Jika maklumat tiada, tulis "Tidak diberikan."',
+          'Gunakan bahasa profesional.',
+          'Pastikan jawapan jelas, praktikal dan mudah digunakan.',
+          useOnlyProvided ? 'Gunakan hanya maklumat yang diberikan.' : 'Nyatakan andaian dengan jelas jika perlu.'
+        ].join('\n- ');
+      }
+      return [
+        'Do not invent information.',
+        'If information is missing, write "Not provided."',
+        'Use professional language.',
+        'Keep the answer clear, practical, and easy to use.',
+        useOnlyProvided ? 'Use only the information provided.' : 'State assumptions clearly if needed.'
+      ].join('\n- ');
+    }
+
+    function makePrompt(lang, role, task, contextLabel, outputItems, extraRules = [], useOnlyProvided = false) {
+      const isBm = lang === 'bm';
+      const rules = '- ' + promptRules(lang, useOnlyProvided);
+      const extras = extraRules.length ? '\n- ' + extraRules.join('\n- ') : '';
+      if (isBm) {
+        return `Anda ialah ${role}.\n\nTugas anda ialah ${task}.\n\nKonteks dan input:\n[${contextLabel}]\n\nBerikan jawapan dalam format berikut:\n${outputItems.map((item, index) => `${index + 1}. ${item}`).join('\n')}\n\nPeraturan:\n${rules}${extras}\n\nSebelum selesai, semak ketepatan, nada, format dan perkara yang mungkin tertinggal.`;
+      }
+      return `You are ${role}.\n\nYour task is to ${task}.\n\nContext and inputs:\n[${contextLabel}]\n\nReturn the answer in this format:\n${outputItems.map((item, index) => `${index + 1}. ${item}`).join('\n')}\n\nRules:\n${rules}${extras}\n\nBefore finalizing, check accuracy, tone, format, and any missing information.`;
+    }
+
+    const templateSpecs = [
+      ['communication', ['Ringkasan Mesyuarat', 'Meeting Summary'], ['Menukar nota mesyuarat kepada ringkasan tindakan yang jelas.', 'Turn meeting notes into a clear action-focused summary.'], ['Selepas mesyuarat, perbincangan projek, bengkel atau sesi susulan.', 'After meetings, project discussions, workshops, or follow-up sessions.'], ['Nota mesyuarat, tarikh, peserta, keputusan, tindakan.', 'Meeting notes, date, attendees, decisions, action items.'], ['Minit mesyuarat jabatan dengan tindakan susulan.', 'Department meeting minutes with follow-up actions.'], ['pembantu eksekutif profesional', 'a professional executive assistant'], ['meringkaskan nota mesyuarat kepada ringkasan perniagaan yang tersusun', 'summarize meeting notes into an organized business summary'], ['TAMPAL NOTA MESYUARAT DI SINI', 'PASTE MEETING NOTES HERE'], [['Tajuk mesyuarat', 'Tarikh', 'Peserta', 'Isi penting', 'Keputusan', 'Tindakan susulan dengan pemilik dan tarikh akhir', 'Risiko atau isu', 'Maklumat tidak diberikan'], ['Meeting title', 'Date', 'Attendees', 'Key points', 'Decisions', 'Follow-up actions with owner and deadline', 'Risks or issues', 'Missing information']]],
+      ['communication', ['Penulis Emel Profesional', 'Professional Email Writer'], ['Menulis emel kerja yang jelas, sopan dan berkesan.', 'Write clear, polite, and effective workplace emails.'], ['Untuk permintaan rasmi, susulan, makluman, peringatan atau pengumuman.', 'For formal requests, follow-ups, updates, reminders, or announcements.'], ['Tujuan emel, penerima, mesej utama, nada, tindakan diminta.', 'Email purpose, recipient, key message, tone, requested action.'], ['Emel susulan kepada pembekal tentang dokumen tertangguh.', 'Follow-up email to a supplier about delayed documents.'], ['pembantu komunikasi perniagaan', 'a business communication assistant'], ['menulis emel profesional berdasarkan butiran yang diberikan', 'write a professional email based on the provided details'], ['TUJUAN, PENERIMA, MESEJ UTAMA, NADA, TINDAKAN DIMINTA', 'PURPOSE, RECIPIENT, KEY MESSAGE, TONE, REQUESTED ACTION'], [['Subjek', 'Isi emel', 'Tindakan yang diminta', 'Penutup profesional'], ['Subject line', 'Email body', 'Requested action', 'Professional closing']]],
+      ['communication', ['Penambahbaikan Emel', 'Email Rewriter'], ['Menambah baik emel kasar supaya lebih profesional dan mudah difahami.', 'Improve rough emails so they are more professional and easier to understand.'], ['Apabila draf emel terlalu panjang, kurang jelas, terlalu keras atau terlalu kasual.', 'When an email draft is too long, unclear, too firm, or too casual.'], ['Emel asal, audiens, nada dikehendaki, mesej wajib dikekalkan.', 'Original email, audience, desired tone, must-keep message.'], ['Menukar emel dalaman menjadi lebih diplomatik.', 'Make an internal email more diplomatic.'], ['editor penulisan perniagaan', 'a business writing editor'], ['menulis semula emel supaya lebih jelas, ringkas dan profesional', 'rewrite the email to be clearer, concise, and professional'], ['TAMPAL EMEL ASAL, AUDIENS, NADA DIKEHENDAKI', 'PASTE ORIGINAL EMAIL, AUDIENCE, DESIRED TONE'], [['Versi emel baharu', 'Perubahan utama', 'Cadangan subjek jika sesuai'], ['Rewritten email', 'Key changes made', 'Suggested subject line if useful']]],
+      ['communication', ['Jawapan Aduan Pelanggan', 'Customer Complaint Reply'], ['Menyediakan jawapan yang empati, jelas dan berorientasikan penyelesaian.', 'Prepare empathetic, clear, and solution-oriented replies.'], ['Untuk aduan pelanggan, kelewatan, isu perkhidmatan atau maklum balas negatif.', 'For customer complaints, delays, service issues, or negative feedback.'], ['Aduan pelanggan, polisi berkaitan, status kes, tindakan yang boleh ditawarkan.', 'Customer complaint, relevant policy, case status, action that can be offered.'], ['Jawapan kepada pelanggan tentang kelewatan penghantaran.', 'Reply to a customer about delivery delay.'], ['wakil khidmat pelanggan profesional', 'a professional customer support representative'], ['menyediakan jawapan kepada aduan pelanggan', 'prepare a response to a customer complaint'], ['ADUAN, LATAR BELAKANG, POLISI, TINDAKAN YANG DIBENARKAN', 'COMPLAINT, BACKGROUND, POLICY, ALLOWED ACTION'], [['Ucapan empati', 'Ringkasan isu', 'Penjelasan ringkas', 'Tindakan seterusnya', 'Nada penutup'], ['Empathetic opening', 'Issue summary', 'Brief explanation', 'Next action', 'Closing tone']]],
+      ['communication', ['Pengumuman Dalaman', 'Internal Announcement'], ['Membina pengumuman dalaman yang ringkas dan mudah diikuti.', 'Create concise internal announcements that are easy to follow.'], ['Untuk memo staf, perubahan proses, acara, tarikh akhir atau makluman operasi.', 'For staff memos, process changes, events, deadlines, or operational updates.'], ['Topik, audiens, tarikh, tindakan, pautan atau rujukan.', 'Topic, audience, date, action, links or references.'], ['Pengumuman jadual latihan wajib kepada semua staf.', 'Announcement of mandatory training schedule to all staff.'], ['pakar komunikasi dalaman', 'an internal communications specialist'], ['menulis pengumuman dalaman yang jelas', 'write a clear internal announcement'], ['TOPIK, AUDIENS, TARIKH, TINDAKAN DIPERLUKAN', 'TOPIC, AUDIENCE, DATE, REQUIRED ACTION'], [['Tajuk', 'Mesej utama', 'Apa yang staf perlu lakukan', 'Tarikh penting', 'Rujukan'], ['Title', 'Main message', 'What staff need to do', 'Important dates', 'Reference']]],
+      ['hr', ['Deskripsi Tugas', 'Job Description'], ['Menyediakan deskripsi tugas yang lengkap, inklusif dan sesuai untuk pengambilan.', 'Create complete, inclusive job descriptions suitable for hiring.'], ['Apabila membuka jawatan baharu atau mengemas kini skop kerja.', 'When opening a new role or updating a job scope.'], ['Jawatan, jabatan, lokasi, tahap, kemahiran, tanggungjawab.', 'Role, department, location, level, skills, responsibilities.'], ['Iklan jawatan eksekutif operasi.', 'Job advertisement for an operations executive.'], ['pakar HR', 'an HR specialist'], ['menyediakan deskripsi tugas profesional', 'create a professional job description'], ['JAWATAN, JABATAN, LOKASI, TAHAP, KEMAHIRAN, TANGGUNGJAWAB', 'ROLE, DEPARTMENT, LOCATION, LEVEL, SKILLS, RESPONSIBILITIES'], [['Ringkasan jawatan', 'Tanggungjawab utama', 'Kelayakan wajib', 'Kelayakan tambahan', 'Kemahiran', 'Manfaat atau peluang perkembangan'], ['Role overview', 'Key responsibilities', 'Required qualifications', 'Preferred qualifications', 'Skills', 'Benefits or growth opportunities']]],
+      ['hr', ['Soalan Temu Duga', 'Interview Questions'], ['Menjana soalan temu duga berstruktur dengan kriteria penilaian.', 'Generate structured interview questions with evaluation criteria.'], ['Selepas deskripsi tugas disediakan atau sebelum sesi temu duga.', 'After a job description is ready or before an interview session.'], ['Jawatan, tahap, kemahiran, industri, kompetensi utama.', 'Role, level, skills, industry, key competencies.'], ['Set soalan untuk jawatan pegawai kewangan.', 'Question set for a finance officer role.'], ['pengurus pengambilan berpengalaman', 'an experienced hiring manager'], ['menyediakan soalan temu duga dan panduan penilaian', 'create interview questions and an evaluation guide'], ['JAWATAN, TAHAP, KEMAHIRAN, INDUSTRI', 'ROLE, LEVEL, SKILLS, INDUSTRY'], [['Soalan umum', 'Soalan teknikal atau peranan', 'Soalan tingkah laku', 'Jawapan kuat patut merangkumi', 'Petunjuk risiko', 'Skor 1 hingga 5'], ['General questions', 'Technical or role-specific questions', 'Behavioral questions', 'Strong answer should include', 'Red flags', 'Score from 1 to 5']]],
+      ['hr', ['Sokongan Saringan Resume', 'Resume Screening Support'], ['Membantu menyemak kesesuaian resume terhadap keperluan jawatan.', 'Help compare a resume against role requirements.'], ['Untuk sokongan awal saringan, bukan keputusan akhir pengambilan.', 'For early screening support, not final hiring decisions.'], ['Resume, keperluan jawatan, kemahiran utama, kriteria wajib.', 'Resume, job requirements, key skills, must-have criteria.'], ['Saringan awal calon pentadbiran.', 'Initial screening for an admin candidate.'], ['pembantu pengambilan HR', 'an HR recruitment assistant'], ['menilai resume berbanding keperluan jawatan', 'evaluate a resume against job requirements'], ['RESUME, KEPERLUAN JAWATAN, KEMAHIRAN UTAMA', 'RESUME, JOB REQUIREMENTS, KEY SKILLS'], [['Skor padanan', 'Kekuatan', 'Jurang', 'Soalan susulan', 'Nota berhati-hati'], ['Match score', 'Strengths', 'Gaps', 'Follow-up questions', 'Caution notes']], ['Jangan menilai berdasarkan umur, jantina, bangsa, agama atau maklumat peribadi tidak relevan.'], true],
+      ['hr', ['Ulasan Prestasi Staf', 'Employee Performance Review'], ['Menyusun ulasan prestasi yang adil, khusus dan membina.', 'Draft fair, specific, and constructive performance reviews.'], ['Untuk persediaan penilaian prestasi atau perbincangan pembangunan.', 'For performance review preparation or development conversations.'], ['Peranan, pencapaian, cabaran, tingkah laku kerja, sasaran akan datang.', 'Role, achievements, challenges, work behaviors, future goals.'], ['Draf ulasan prestasi separuh tahun.', 'Mid-year performance review draft.'], ['pembantu ulasan prestasi HR', 'an HR performance review assistant'], ['menyediakan ulasan prestasi yang seimbang', 'draft a balanced performance review'], ['PERANAN, PENCAPAIAN, CABARAN, CONTOH KERJA, SASARAN', 'ROLE, ACHIEVEMENTS, CHALLENGES, WORK EXAMPLES, GOALS'], [['Ringkasan prestasi', 'Kekuatan', 'Bidang penambahbaikan', 'Contoh khusus', 'Cadangan pembangunan', 'Nada perbualan'], ['Performance summary', 'Strengths', 'Improvement areas', 'Specific examples', 'Development suggestions', 'Conversation tone']]],
+      ['hr', ['Analisis Keperluan Latihan', 'Training Needs Analysis'], ['Mengenal pasti jurang kemahiran dan cadangan latihan praktikal.', 'Identify skill gaps and practical training recommendations.'], ['Untuk perancangan latihan pasukan, onboarding atau pembangunan staf.', 'For team training plans, onboarding, or staff development.'], ['Peranan staf, kemahiran semasa, sasaran kerja, jurang prestasi.', 'Staff roles, current skills, work goals, performance gaps.'], ['Pelan latihan pasukan khidmat pelanggan.', 'Training plan for a customer service team.'], ['perunding pembelajaran dan pembangunan', 'a learning and development consultant'], ['menganalisis keperluan latihan dan mencadangkan tindakan', 'analyze training needs and recommend actions'], ['PERANAN, KEMAHIRAN SEMASA, SASARAN, JURANG, KEKANGAN MASA', 'ROLES, CURRENT SKILLS, GOALS, GAPS, TIME CONSTRAINTS'], [['Jurang kemahiran', 'Keutamaan latihan', 'Cadangan latihan', 'Tempoh', 'Cara mengukur keberkesanan'], ['Skill gaps', 'Training priorities', 'Training recommendations', 'Timeline', 'How to measure effectiveness']]],
+      ['learning', ['Pembangunan Kurikulum dan Kandungan Pembelajaran', 'Curriculum and Learning Content Development'], ['Membangunkan struktur kurikulum atau kandungan pembelajaran untuk satu topik mengikut level dan kumpulan sasaran.', 'Develop a curriculum or learning content structure for a topic based on level and target audience.'], ['Apabila perlu membina kursus, bengkel, modul latihan, kandungan e-learning atau pelan pembelajaran topik tertentu.', 'When creating a course, workshop, training module, e-learning content, or learning plan for a specific topic.'], ['Topik, level pembelajaran, kumpulan sasaran, tempoh, objektif, prasyarat, mod penyampaian, hasil pembelajaran.', 'Topic, learning level, target audience, duration, objectives, prerequisites, delivery mode, learning outcomes.'], ['Rangka kurikulum asas untuk topik penggunaan AI dalam kerja harian.', 'Basic curriculum outline for using AI in daily work.'], ['pereka instruksional dan pakar pembangunan kurikulum', 'an instructional designer and curriculum development specialist'], ['membangunkan kurikulum dan kandungan pembelajaran yang praktikal untuk topik yang diberikan', 'develop a practical curriculum and learning content plan for the given topic'], ['TOPIK, LEVEL, KUMPULAN SASARAN, TEMPOH, OBJEKTIF, PRASYARAT, MOD PENYAMPAIAN, HASIL PEMBELAJARAN', 'TOPIC, LEVEL, TARGET AUDIENCE, DURATION, OBJECTIVES, PREREQUISITES, DELIVERY MODE, LEARNING OUTCOMES'], [['Ringkasan kursus atau modul', 'Kumpulan sasaran dan tahap pengetahuan', 'Cadangan topik dan subtopik', 'Objektif pembelajaran', 'Struktur modul mengikut sesi', 'Aktiviti pembelajaran', 'Bahan atau sumber diperlukan', 'Penilaian dan rubrik ringkas', 'Cadangan tugasan atau latihan amali', 'Langkah seterusnya untuk membangunkan bahan penuh'], ['Course or module summary', 'Target audience and knowledge level', 'Suggested topics and subtopics', 'Learning objectives', 'Module structure by session', 'Learning activities', 'Required materials or resources', 'Assessment and simple rubric', 'Suggested assignment or practical exercise', 'Next steps to develop full materials']], ['Sesuaikan cadangan dengan level peserta: asas, pertengahan atau lanjutan.', 'Pastikan kandungan tidak terlalu padat untuk tempoh yang diberikan.', 'Berikan cadangan topik yang logik dari mudah kepada kompleks.']],
+      ['operations', ['Penulis SOP', 'Standard Operating Procedure Writer'], ['Menukar proses kerja kepada SOP langkah demi langkah.', 'Turn a work process into a step-by-step SOP.'], ['Untuk proses berulang, onboarding, kawalan kualiti atau dokumentasi operasi.', 'For repeatable processes, onboarding, quality control, or operations documentation.'], ['Nama proses, pemilik, langkah, sistem digunakan, risiko, kelulusan.', 'Process name, owner, steps, systems used, risks, approvals.'], ['SOP permohonan pembelian dalaman.', 'SOP for internal purchase requests.'], ['pengurus operasi', 'an operations manager'], ['menulis SOP yang jelas dan mudah diikuti', 'write a clear and easy-to-follow SOP'], ['NAMA PROSES, TUJUAN, LANGKAH, PEMILIK, SISTEM, RISIKO', 'PROCESS NAME, PURPOSE, STEPS, OWNER, SYSTEMS, RISKS'], [['Tujuan', 'Skop', 'Tanggungjawab', 'Langkah proses', 'Senarai semak', 'Risiko dan kawalan'], ['Purpose', 'Scope', 'Responsibilities', 'Process steps', 'Checklist', 'Risks and controls']]],
+      ['operations', ['Penambahbaikan Proses', 'Process Improvement'], ['Menganalisis proses sedia ada dan mencadangkan penambahbaikan.', 'Analyze an existing process and suggest improvements.'], ['Apabila proses lambat, berulang, mengelirukan atau banyak ralat.', 'When a process is slow, repetitive, confusing, or error-prone.'], ['Proses semasa, masalah, masa diambil, pihak terlibat, kekangan.', 'Current process, problems, time taken, stakeholders, constraints.'], ['Mengurangkan masa kelulusan tuntutan.', 'Reduce claim approval time.'], ['penganalisis penambahbaikan proses', 'a business process improvement analyst'], ['mencadangkan cara menambah baik proses kerja', 'suggest ways to improve a work process'], ['PROSES SEMASA, ISU, PIHAK TERLIBAT, KEKANGAN', 'CURRENT PROCESS, ISSUES, STAKEHOLDERS, CONSTRAINTS'], [['Masalah utama', 'Punca berkemungkinan', 'Cadangan cepat', 'Cadangan jangka panjang', 'Kesan dijangka', 'Risiko pelaksanaan'], ['Main problems', 'Likely causes', 'Quick wins', 'Longer-term improvements', 'Expected impact', 'Implementation risks']]],
+      ['operations', ['Keutamaan Tugasan', 'Task Prioritization'], ['Membantu menyusun tugasan mengikut keutamaan dan tarikh akhir.', 'Help organize tasks by priority and deadline.'], ['Apabila banyak tugasan perlu disusun untuk hari atau minggu kerja.', 'When many tasks need to be organized for the day or week.'], ['Senarai tugasan, tarikh akhir, impak, usaha, kekangan.', 'Task list, deadlines, impact, effort, constraints.'], ['Mengatur kerja mingguan eksekutif pentadbiran.', 'Organize a weekly admin executive workload.'], ['jurulatih produktiviti', 'a productivity coach'], ['menyusun keutamaan tugasan secara praktikal', 'prioritize tasks practically'], ['SENARAI TUGASAN, TARIKH AKHIR, IMPAK, USAHA', 'TASK LIST, DEADLINES, IMPACT, EFFORT'], [['Keutamaan tinggi', 'Keutamaan sederhana', 'Keutamaan rendah', 'Sebab keutamaan', 'Risiko tarikh akhir', 'Cadangan jadual'], ['High priority', 'Medium priority', 'Low priority', 'Reason for priority', 'Deadline risks', 'Suggested schedule']]],
+      ['operations', ['Pelan Kerja Mingguan', 'Weekly Work Plan'], ['Membina pelan kerja mingguan yang realistik dan mudah dipantau.', 'Build a realistic weekly work plan that is easy to monitor.'], ['Untuk perancangan individu, pasukan kecil atau persediaan mesyuarat mingguan.', 'For individual planning, small teams, or weekly meeting preparation.'], ['Matlamat minggu, tugasan, tarikh akhir, mesyuarat, keutamaan.', 'Weekly goals, tasks, deadlines, meetings, priorities.'], ['Pelan kerja pasukan operasi untuk minggu depan.', 'Operations team work plan for next week.'], ['perancang produktiviti pasukan', 'a team productivity planner'], ['membina pelan kerja mingguan', 'create a weekly work plan'], ['MATLAMAT, TUGASAN, TARIKH AKHIR, MESYUARAT, KEKANGAN', 'GOALS, TASKS, DEADLINES, MEETINGS, CONSTRAINTS'], [['Matlamat utama', 'Pelan mengikut hari', 'Tindakan kritikal', 'Masa semakan', 'Risiko dan pelan sandaran'], ['Main goals', 'Plan by day', 'Critical actions', 'Review time', 'Risks and backup plan']]],
+      ['operations', ['Memo Keputusan', 'Decision Memo'], ['Meringkaskan pilihan, risiko dan cadangan untuk membuat keputusan.', 'Summarize options, risks, and recommendations for decision-making.'], ['Sebelum mendapatkan kelulusan pengurusan atau memilih antara beberapa pilihan.', 'Before seeking management approval or choosing between options.'], ['Isu, pilihan, kos, manfaat, risiko, cadangan.', 'Issue, options, cost, benefits, risks, recommendation.'], ['Memo memilih vendor latihan.', 'Memo to choose a training vendor.'], ['penasihat strategi', 'a strategy advisor'], ['menulis memo keputusan yang ringkas dan seimbang', 'write a concise and balanced decision memo'], ['ISU, PILIHAN, KOS, MANFAAT, RISIKO, CADANGAN', 'ISSUE, OPTIONS, COSTS, BENEFITS, RISKS, RECOMMENDATION'], [['Keputusan diperlukan', 'Latar belakang', 'Pilihan', 'Perbandingan', 'Cadangan', 'Risiko dan mitigasi'], ['Decision needed', 'Background', 'Options', 'Comparison', 'Recommendation', 'Risks and mitigation']]],
+      ['sales', ['Emel Jualan', 'Sales Email'], ['Menulis emel jualan atau outreach yang jelas dan tidak mendesak.', 'Write clear and respectful sales or outreach emails.'], ['Untuk prospek, pelanggan sedia ada, susulan atau pengenalan produk.', 'For prospects, existing customers, follow-ups, or product introductions.'], ['Produk, audiens, masalah pelanggan, tawaran, tindakan diminta.', 'Product, audience, customer pain point, offer, call to action.'], ['Emel pengenalan servis kepada prospek korporat.', 'Introductory service email to a corporate prospect.'], ['penulis jualan B2B', 'a B2B sales copywriter'], ['menulis emel jualan yang profesional', 'write a professional sales email'], ['PRODUK, AUDIENS, MASALAH, TAWARAN, CTA', 'PRODUCT, AUDIENCE, PAIN POINT, OFFER, CTA'], [['Subjek', 'Pembuka', 'Nilai utama', 'Bukti atau manfaat', 'Tindakan seterusnya', 'Versi ringkas'], ['Subject line', 'Opening', 'Core value', 'Proof or benefit', 'Next action', 'Short version']]],
+      ['sales', ['Posting Media Sosial', 'Social Media Post'], ['Mencipta posting media sosial yang jelas dan sesuai dengan audiens.', 'Create clear social media posts suited to the audience.'], ['Untuk kempen, makluman, promosi, pendidikan pelanggan atau penglibatan komuniti.', 'For campaigns, updates, promotions, customer education, or community engagement.'], ['Platform, audiens, mesej, nada, CTA, had perkataan.', 'Platform, audience, message, tone, CTA, word limit.'], ['Posting LinkedIn tentang program latihan baharu.', 'LinkedIn post about a new training program.'], ['strategis kandungan media sosial', 'a social media content strategist'], ['menulis posting media sosial berdasarkan objektif', 'write a social media post based on the objective'], ['PLATFORM, AUDIENS, MESEJ, NADA, CTA', 'PLATFORM, AUDIENCE, MESSAGE, TONE, CTA'], [['Posting utama', 'Cadangan visual', 'Hashtag sesuai', 'CTA', 'Versi alternatif'], ['Main post', 'Visual suggestion', 'Relevant hashtags', 'CTA', 'Alternative version']]],
+      ['sales', ['Pelan Kempen Pemasaran', 'Marketing Campaign Plan'], ['Menyusun pelan kempen pemasaran yang praktikal dan boleh dilaksanakan.', 'Create a practical and executable marketing campaign plan.'], ['Untuk pelancaran produk, promosi, kesedaran jenama atau acara.', 'For product launches, promotions, brand awareness, or events.'], ['Objektif, audiens, tawaran, saluran, bajet, tempoh.', 'Objective, audience, offer, channels, budget, timeline.'], ['Pelan kempen promosi perkhidmatan baharu.', 'Campaign plan for a new service promotion.'], ['strategis pemasaran', 'a marketing strategist'], ['membina pelan kempen pemasaran', 'build a marketing campaign plan'], ['OBJEKTIF, AUDIENS, TAWARAN, SALURAN, BAJET, TEMPOH', 'OBJECTIVE, AUDIENCE, OFFER, CHANNELS, BUDGET, TIMELINE'], [['Objektif kempen', 'Audiens sasaran', 'Mesej utama', 'Saluran', 'Aktiviti', 'KPI', 'Garis masa'], ['Campaign objective', 'Target audience', 'Key message', 'Channels', 'Activities', 'KPIs', 'Timeline']]],
+      ['sales', ['Persona Pelanggan', 'Customer Persona'], ['Membina persona pelanggan untuk memahami keperluan dan motivasi audiens.', 'Build customer personas to understand audience needs and motivations.'], ['Untuk perancangan produk, pemasaran, khidmat pelanggan atau kandungan.', 'For product planning, marketing, customer service, or content.'], ['Jenis pelanggan, data pemerhatian, matlamat, cabaran, tingkah laku.', 'Customer type, observations, goals, challenges, behaviors.'], ['Persona pembeli untuk pakej latihan korporat.', 'Buyer persona for corporate training packages.'], ['pakar penyelidikan pasaran', 'a market research specialist'], ['membina persona pelanggan berdasarkan maklumat yang diberi', 'build a customer persona from the provided information'], ['JENIS PELANGGAN, DATA, MATLAMAT, CABARAN, TINGKAH LAKU', 'CUSTOMER TYPE, DATA, GOALS, CHALLENGES, BEHAVIORS'], [['Profil ringkas', 'Matlamat', 'Cabaran', 'Keperluan maklumat', 'Mesej yang sesuai', 'Cara mendekati'], ['Short profile', 'Goals', 'Challenges', 'Information needs', 'Suitable message', 'Engagement approach']]],
+      ['sales', ['Analisis Pesaing', 'Competitor Analysis'], ['Membandingkan pesaing secara tersusun untuk mengenal pasti peluang.', 'Compare competitors in a structured way to identify opportunities.'], ['Untuk strategi pemasaran, harga, kedudukan produk atau laporan pengurusan.', 'For marketing strategy, pricing, positioning, or management reports.'], ['Nama pesaing, produk, harga, kekuatan, kelemahan, sumber maklumat.', 'Competitor names, products, pricing, strengths, weaknesses, sources.'], ['Perbandingan tiga penyedia latihan.', 'Comparison of three training providers.'], ['penganalisis perniagaan', 'a business analyst'], ['menyediakan analisis pesaing yang ringkas', 'prepare a concise competitor analysis'], ['PESAING, PRODUK, HARGA, KEKUATAN, KELEMAHAN, SUMBER', 'COMPETITORS, PRODUCTS, PRICING, STRENGTHS, WEAKNESSES, SOURCES'], [['Jadual perbandingan', 'Kekuatan pesaing', 'Kelemahan pesaing', 'Peluang untuk organisasi', 'Cadangan tindakan'], ['Comparison table', 'Competitor strengths', 'Competitor weaknesses', 'Opportunities for the organization', 'Recommended actions']]],
+      ['analysis', ['Ekstraksi Data', 'Data Extraction'], ['Mengeluarkan maklumat penting daripada teks kepada jadual tersusun.', 'Extract key information from text into a structured table.'], ['Untuk emel panjang, laporan, borang, transkrip atau nota operasi.', 'For long emails, reports, forms, transcripts, or operations notes.'], ['Teks sumber, medan yang perlu diekstrak, format jadual.', 'Source text, fields to extract, table format.'], ['Ekstrak tarikh akhir dan pemilik tugasan daripada nota.', 'Extract deadlines and task owners from notes.'], ['pembantu ekstraksi data', 'a data extraction assistant'], ['mengekstrak maklumat khusus daripada teks', 'extract specific information from text'], ['TEKS SUMBER, MEDAN DIPERLUKAN, FORMAT JADUAL', 'SOURCE TEXT, REQUIRED FIELDS, TABLE FORMAT'], [['Jadual data', 'Maklumat tidak diberikan', 'Item yang perlu disahkan', 'Ringkasan pendek'], ['Data table', 'Missing information', 'Items to verify', 'Short summary']], [], true],
+      ['analysis', ['Ringkasan Kajian', 'Research Summary'], ['Meringkaskan bahan rujukan kepada dapatan yang mudah difahami.', 'Summarize reference material into easy-to-understand findings.'], ['Untuk artikel, laporan, kajian pasaran, polisi atau dokumen panjang.', 'For articles, reports, market research, policies, or long documents.'], ['Teks kajian, tujuan ringkasan, audiens, panjang jawapan.', 'Research text, summary purpose, audience, response length.'], ['Ringkasan laporan industri untuk pengurusan.', 'Industry report summary for management.'], ['penganalisis kajian perniagaan', 'a business research analyst'], ['meringkaskan bahan kajian untuk kegunaan kerja', 'summarize research material for work use'], ['BAHAN KAJIAN, TUJUAN, AUDIENS, PANJANG JAWAPAN', 'RESEARCH MATERIAL, PURPOSE, AUDIENCE, RESPONSE LENGTH'], [['Ringkasan eksekutif', 'Dapatan utama', 'Implikasi kepada kerja', 'Risiko atau batasan', 'Soalan susulan'], ['Executive summary', 'Key findings', 'Work implications', 'Risks or limitations', 'Follow-up questions']], [], true],
+      ['analysis', ['Penjana Laporan Perniagaan', 'Business Report Generator'], ['Menyusun maklumat kepada laporan perniagaan yang kemas.', 'Organize information into a clean business report.'], ['Untuk laporan status, bulanan, projek, operasi atau prestasi.', 'For status, monthly, project, operations, or performance reports.'], ['Tujuan laporan, data, tempoh, audiens, format.', 'Report purpose, data, period, audience, format.'], ['Laporan status projek bulanan.', 'Monthly project status report.'], ['penulis laporan perniagaan', 'a business report writer'], ['menjana laporan perniagaan berdasarkan maklumat yang diberikan', 'generate a business report from the provided information'], ['TUJUAN LAPORAN, DATA, TEMPOH, AUDIENS, FORMAT', 'REPORT PURPOSE, DATA, PERIOD, AUDIENCE, FORMAT'], [['Tajuk', 'Ringkasan eksekutif', 'Dapatan utama', 'Analisis', 'Risiko', 'Cadangan', 'Langkah seterusnya'], ['Title', 'Executive summary', 'Key findings', 'Analysis', 'Risks', 'Recommendations', 'Next steps']]],
+      ['analysis', ['Analisis SWOT', 'SWOT Analysis'], ['Menyusun kekuatan, kelemahan, peluang dan ancaman secara praktikal.', 'Organize strengths, weaknesses, opportunities, and threats practically.'], ['Untuk projek, jabatan, produk, strategi atau inisiatif baharu.', 'For projects, departments, products, strategies, or new initiatives.'], ['Objek analisis, konteks, matlamat, maklumat sokongan.', 'Analysis subject, context, goals, supporting information.'], ['SWOT untuk inisiatif automasi proses.', 'SWOT for a process automation initiative.'], ['perunding strategi', 'a strategy consultant'], ['menyediakan analisis SWOT yang berguna', 'prepare a useful SWOT analysis'], ['OBJEK ANALISIS, KONTEKS, MATLAMAT, MAKLUMAT SOKONGAN', 'SUBJECT, CONTEXT, GOALS, SUPPORTING INFORMATION'], [['Kekuatan', 'Kelemahan', 'Peluang', 'Ancaman', 'Keutamaan tindakan', 'Cadangan ringkas'], ['Strengths', 'Weaknesses', 'Opportunities', 'Threats', 'Action priorities', 'Brief recommendations']]],
+      ['analysis', ['Penerangan Dashboard KPI', 'KPI Dashboard Explanation'], ['Menerangkan dashboard KPI dalam bahasa yang mudah difahami.', 'Explain a KPI dashboard in easy-to-understand language.'], ['Apabila perlu menerangkan prestasi kepada staf, pengurusan atau pasukan.', 'When explaining performance to staff, management, or a team.'], ['Senarai KPI, nilai semasa, sasaran, trend, isu utama.', 'KPI list, current values, targets, trends, key issues.'], ['Penjelasan dashboard bulanan jualan.', 'Explanation of a monthly sales dashboard.'], ['penganalisis prestasi perniagaan', 'a business performance analyst'], ['menerangkan makna KPI dan tindakan susulan', 'explain KPI meaning and follow-up actions'], ['KPI, NILAI SEMASA, SASARAN, TREND, ISU', 'KPIS, CURRENT VALUES, TARGETS, TRENDS, ISSUES'], [['Ringkasan prestasi', 'KPI yang baik', 'KPI yang perlu perhatian', 'Sebab berkemungkinan', 'Tindakan dicadangkan'], ['Performance summary', 'KPIs performing well', 'KPIs needing attention', 'Likely reasons', 'Recommended actions']]],
+      ['risk', ['Analisis Risiko', 'Risk Analysis'], ['Mengenal pasti risiko, impak, kebarangkalian dan mitigasi.', 'Identify risks, impact, likelihood, and mitigation.'], ['Untuk projek, proses, keputusan, vendor atau perubahan operasi.', 'For projects, processes, decisions, vendors, or operational changes.'], ['Situasi, objektif, pihak terlibat, risiko diketahui, kawalan sedia ada.', 'Situation, objective, stakeholders, known risks, existing controls.'], ['Analisis risiko pelaksanaan sistem baharu.', 'Risk analysis for implementing a new system.'], ['penganalisis risiko perniagaan', 'a business risk analyst'], ['menganalisis risiko dan cadangan mitigasi', 'analyze risks and mitigation options'], ['SITUASI, OBJEKTIF, PIHAK TERLIBAT, RISIKO DIKETAHUI', 'SITUATION, OBJECTIVE, STAKEHOLDERS, KNOWN RISKS'], [['Daftar risiko', 'Impak', 'Kebarangkalian', 'Tahap risiko', 'Mitigasi', 'Pemilik tindakan'], ['Risk register', 'Impact', 'Likelihood', 'Risk level', 'Mitigation', 'Action owner']]],
+      ['risk', ['Penulisan Semula Polisi', 'Policy Rewriting'], ['Menulis semula polisi supaya lebih jelas dan mudah difahami.', 'Rewrite policies to be clearer and easier to understand.'], ['Untuk polisi dalaman, garis panduan staf, SOP atau arahan pematuhan.', 'For internal policies, staff guidelines, SOPs, or compliance instructions.'], ['Teks polisi asal, audiens, nada, perkara wajib dikekalkan.', 'Original policy text, audience, tone, must-keep points.'], ['Ringkaskan polisi tuntutan perjalanan untuk staf.', 'Simplify travel claim policy for staff.'], ['pakar komunikasi korporat', 'a corporate communications specialist'], ['menulis semula polisi dalam bahasa yang jelas', 'rewrite a policy in clear language'], ['TEKS POLISI, AUDIENS, NADA, PERKARA WAJIB', 'POLICY TEXT, AUDIENCE, TONE, REQUIRED POINTS'], [['Versi polisi baharu', 'Perkara utama', 'Tindakan staf', 'Perkara yang perlu disahkan'], ['Rewritten policy', 'Key points', 'Staff actions', 'Items to confirm']], [], true],
+      ['risk', ['Senarai Semak Pematuhan', 'Compliance Checklist'], ['Membina senarai semak untuk membantu semakan pematuhan.', 'Create checklists to support compliance review.'], ['Untuk proses, dokumen, projek, audit dalaman atau semakan berkala.', 'For processes, documents, projects, internal audits, or periodic checks.'], ['Keperluan pematuhan, proses, bukti diperlukan, pemilik.', 'Compliance requirements, process, required evidence, owner.'], ['Checklist semakan dokumen vendor.', 'Checklist for vendor document review.'], ['pegawai pematuhan', 'a compliance officer'], ['menyediakan senarai semak pematuhan praktikal', 'create a practical compliance checklist'], ['KEPERLUAN, PROSES, BUKTI, PEMILIK, TARIKH', 'REQUIREMENTS, PROCESS, EVIDENCE, OWNER, DATE'], [['Item semakan', 'Bukti diperlukan', 'Status', 'Pemilik', 'Catatan', 'Risiko jika tidak lengkap'], ['Checklist item', 'Required evidence', 'Status', 'Owner', 'Notes', 'Risk if incomplete']]],
+      ['risk', ['Cadangan Projek', 'Project Proposal'], ['Menyediakan cadangan projek yang teratur untuk pertimbangan.', 'Prepare a structured project proposal for consideration.'], ['Apabila mencadangkan inisiatif, penambahbaikan, sistem atau aktiviti baharu.', 'When proposing an initiative, improvement, system, or new activity.'], ['Masalah, objektif, skop, manfaat, sumber, tempoh, risiko.', 'Problem, objective, scope, benefits, resources, timeline, risks.'], ['Cadangan projek automasi laporan mingguan.', 'Proposal for weekly report automation.'], ['penulis cadangan perniagaan', 'a business proposal writer'], ['menulis cadangan projek yang jelas', 'write a clear project proposal'], ['MASALAH, OBJEKTIF, SKOP, MANFAAT, SUMBER, TEMPOH, RISIKO', 'PROBLEM, OBJECTIVE, SCOPE, BENEFITS, RESOURCES, TIMELINE, RISKS'], [['Tajuk projek', 'Latar belakang', 'Objektif', 'Skop', 'Manfaat', 'Pelan pelaksanaan', 'Risiko', 'Keputusan diminta'], ['Project title', 'Background', 'Objectives', 'Scope', 'Benefits', 'Implementation plan', 'Risks', 'Decision requested']]],
+      ['risk', ['Kes Perniagaan', 'Business Case'], ['Menyusun justifikasi perniagaan untuk pelaburan atau perubahan.', 'Build a business justification for investment or change.'], ['Untuk pembelian, sistem baharu, perubahan proses atau inisiatif strategik.', 'For purchases, new systems, process changes, or strategic initiatives.'], ['Cadangan, kos, manfaat, risiko, pilihan alternatif, impak.', 'Proposal, costs, benefits, risks, alternatives, impact.'], ['Kes perniagaan untuk alat analitik baharu.', 'Business case for a new analytics tool.'], ['perunding strategi perniagaan', 'a business strategy consultant'], ['menyediakan kes perniagaan yang seimbang', 'prepare a balanced business case'], ['CADANGAN, KOS, MANFAAT, RISIKO, ALTERNATIF, IMPAK', 'PROPOSAL, COSTS, BENEFITS, RISKS, ALTERNATIVES, IMPACT'], [['Masalah atau peluang', 'Cadangan', 'Manfaat', 'Kos dan sumber', 'Risiko', 'Alternatif', 'Cadangan keputusan'], ['Problem or opportunity', 'Recommendation', 'Benefits', 'Costs and resources', 'Risks', 'Alternatives', 'Decision recommendation']]],
+      ['vibe', ['Ringkasan Idea Aplikasi', 'App Idea Brief'], ['Menukar idea kasar kepada brief aplikasi yang jelas sebelum dibina dengan vibe coding tool.', 'Turn a rough idea into a clear app brief before building with a vibe coding tool.'], ['Apabila anda ada idea aplikasi tetapi belum jelas pengguna, fungsi dan skopnya.', 'When you have an app idea but the users, features, and scope are not yet clear.'], ['Masalah yang mahu diselesaikan, pengguna sasaran, tugasan utama, platform, had skop.', 'Problem to solve, target users, main tasks, platform, scope limits.'], ['Brief aplikasi kecil untuk menjejak permohonan dalaman.', 'Brief for a small app to track internal requests.'], ['penganalisis produk digital yang mesra pengguna bukan teknikal', 'a digital product analyst who works well with non-technical users'], ['menukar idea aplikasi kepada brief yang boleh digunakan oleh vibe coding tool', 'turn an app idea into a brief that can be used with a vibe coding tool'], ['IDEA APLIKASI, PENGGUNA SASARAN, MASALAH, PLATFORM, SKOP', 'APP IDEA, TARGET USERS, PROBLEM, PLATFORM, SCOPE'], [['Nama aplikasi', 'Masalah yang diselesaikan', 'Pengguna sasaran', 'Ciri utama', 'Perkara di luar skop', 'Soalan penjelasan sebelum bina'], ['App name', 'Problem solved', 'Target users', 'Core features', 'Out of scope', 'Clarifying questions before building']]],
+      ['vibe', ['Spesifikasi Aplikasi Satu Halaman', 'One-Page App Specification'], ['Menyediakan spesifikasi ringkas yang boleh disalin ke alat vibe coding untuk membina aplikasi.', 'Create a concise specification that can be copied into a vibe coding tool to build an app.'], ['Sebelum meminta AI membina prototaip, dashboard, borang atau portal kecil.', 'Before asking AI to build a prototype, dashboard, form, or small portal.'], ['Tujuan aplikasi, pengguna, halaman, data, tindakan, reka bentuk, kekangan.', 'App purpose, users, pages, data, actions, design, constraints.'], ['Spesifikasi aplikasi inventori ringkas.', 'Specification for a simple inventory app.'], ['pemilik produk dan arkitek frontend', 'a product owner and frontend architect'], ['menulis spesifikasi aplikasi satu halaman yang jelas dan boleh dibina', 'write a clear and buildable one-page app specification'], ['TUJUAN, PENGGUNA, HALAMAN, DATA, TINDAKAN, GAYA UI, KEKANGAN', 'PURPOSE, USERS, PAGES, DATA, ACTIONS, UI STYLE, CONSTRAINTS'], [['Ringkasan aplikasi', 'Aliran pengguna', 'Halaman atau skrin', 'Komponen UI', 'Data diperlukan', 'Peraturan validasi', 'Kriteria siap'], ['App summary', 'User flow', 'Pages or screens', 'UI components', 'Required data', 'Validation rules', 'Definition of done']]],
+      ['vibe', ['Arahan Build Untuk Vibe Coding', 'Vibe Coding Build Prompt'], ['Menyediakan arahan lengkap untuk meminta alat AI membina aplikasi HTML, CSS dan JavaScript.', 'Prepare complete instructions for asking an AI tool to build an HTML, CSS, and JavaScript app.'], ['Apabila anda mahu terus menjana aplikasi satu fail atau prototaip interaktif.', 'When you want to generate a single-file app or interactive prototype directly.'], ['Jenis aplikasi, ciri, kandungan, gaya visual, interaksi, peraturan teknikal.', 'App type, features, content, visual style, interactions, technical rules.'], ['Prompt untuk membina kalkulator kos latihan.', 'Prompt to build a training cost calculator.'], ['senior frontend developer dan pereka UI/UX', 'a senior frontend developer and UI/UX designer'], ['membina aplikasi lengkap berdasarkan keperluan berikut', 'build a complete app based on the following requirements'], ['JENIS APLIKASI, CIRI, KANDUNGAN, REKA BENTUK, INTERAKSI, HAD TEKNIKAL', 'APP TYPE, FEATURES, CONTENT, DESIGN, INTERACTIONS, TECHNICAL LIMITS'], [['Fail yang perlu dijana', 'Struktur aplikasi', 'Ciri wajib', 'Keperluan UI/UX', 'Responsif mudah alih', 'Data contoh', 'Ujian manual selepas siap'], ['Files to generate', 'App structure', 'Required features', 'UI/UX requirements', 'Mobile responsiveness', 'Sample data', 'Manual tests after completion']], ['Bina menggunakan HTML, CSS dan JavaScript vanilla sahaja kecuali saya nyatakan sebaliknya.', 'Jangan gunakan data sulit atau sambungan luar tanpa kebenaran.']],
+      ['vibe', ['Semakan UI/UX Aplikasi', 'App UI/UX Review'], ['Menyemak aplikasi yang dijana supaya lebih kemas, mudah digunakan dan profesional.', 'Review a generated app so it becomes cleaner, easier to use, and more professional.'], ['Selepas vibe coding tool menghasilkan versi pertama aplikasi.', 'After a vibe coding tool creates the first version of an app.'], ['Kod atau penerangan aplikasi, pengguna sasaran, objektif, isu yang dilihat.', 'Code or app description, target users, objective, observed issues.'], ['Semak UI prototaip borang tuntutan.', 'Review the UI of a claim form prototype.'], ['pereka produk digital dan penyemak kebolehgunaan', 'a digital product designer and usability reviewer'], ['menilai UI/UX aplikasi dan mencadangkan penambahbaikan khusus', 'evaluate the app UI/UX and suggest specific improvements'], ['KOD ATAU PENERANGAN APLIKASI, PENGGUNA, OBJEKTIF, ISU', 'CODE OR APP DESCRIPTION, USERS, OBJECTIVE, ISSUES'], [['Isu keutamaan tinggi', 'Cadangan reka letak', 'Cadangan teks mikro', 'Isu aksesibiliti', 'Penambahbaikan responsif', 'Senarai perubahan untuk diberikan kepada vibe coding tool'], ['High-priority issues', 'Layout recommendations', 'Microcopy recommendations', 'Accessibility issues', 'Responsive improvements', 'Change list for the vibe coding tool']], [], true],
+      ['vibe', ['Debug dan Baiki Aplikasi', 'Debug and Improve App'], ['Membantu menerangkan bug dan meminta AI membaiki aplikasi secara terkawal.', 'Help describe bugs and ask AI to fix an app in a controlled way.'], ['Apabila aplikasi tidak berfungsi, butang tidak memberi respons, layout rosak atau data tidak dipaparkan.', 'When an app is not working, buttons do not respond, layout breaks, or data does not display.'], ['Kod semasa, masalah, langkah menghasilkan bug, jangkaan, mesej ralat.', 'Current code, problem, reproduction steps, expected behavior, error messages.'], ['Baiki fungsi carian yang tidak menapis kad.', 'Fix a search function that does not filter cards.'], ['jurutera frontend yang teliti dan fokus kepada debugging', 'a careful frontend engineer focused on debugging'], ['menganalisis bug dan mencadangkan pembaikan kod yang minimum', 'analyze the bug and suggest the smallest safe code fix'], ['KOD SEMASA, MASALAH, LANGKAH ULANG BUG, JANGKAAN, RALAT', 'CURRENT CODE, PROBLEM, REPRO STEPS, EXPECTED BEHAVIOR, ERRORS'], [['Punca berkemungkinan', 'Fail atau fungsi terlibat', 'Kod yang perlu diubah', 'Penjelasan ringkas', 'Ujian selepas pembaikan', 'Risiko regresi'], ['Likely cause', 'Affected file or function', 'Code to change', 'Brief explanation', 'Tests after fix', 'Regression risks']], ['Jangan tulis semula keseluruhan aplikasi jika pembaikan kecil sudah mencukupi.', 'Kekalkan fungsi sedia ada kecuali diminta mengubahnya.']],
+      ['vibe', ['Status Keselamatan Aplikasi', 'App Security Status Review'], ['Menilai tahap keselamatan aplikasi yang dibangunkan dengan vibe coding tools sebelum digunakan.', 'Assess the security status of an app built with vibe coding tools before use.'], ['Sebelum aplikasi dikongsi, digunakan oleh pasukan, atau memproses data sebenar.', 'Before an app is shared, used by a team, or processes real data.'], ['Kod atau penerangan aplikasi, jenis data, pengguna, integrasi, kawalan akses, hosting.', 'Code or app description, data types, users, integrations, access controls, hosting.'], ['Semakan keselamatan prototaip portal borang dalaman.', 'Security review for an internal form portal prototype.'], ['penyemak keselamatan aplikasi untuk pengguna bukan teknikal', 'an application security reviewer for non-technical users'], ['menilai status keselamatan aplikasi dan memberi cadangan mitigasi yang praktikal', 'assess app security status and provide practical mitigation recommendations'], ['KOD ATAU PENERANGAN APLIKASI, DATA, PENGGUNA, INTEGRASI, AKSES, HOSTING', 'CODE OR APP DESCRIPTION, DATA, USERS, INTEGRATIONS, ACCESS, HOSTING'], [['Ringkasan status keselamatan', 'Risiko kritikal', 'Risiko sederhana dan rendah', 'Isu data sensitif', 'Semakan akses dan kebenaran', 'Cadangan mitigasi', 'Keputusan: sesuai diuji, perlu baiki, atau tidak sesuai digunakan'], ['Security status summary', 'Critical risks', 'Medium and low risks', 'Sensitive data issues', 'Access and permission review', 'Mitigation recommendations', 'Decision: ready to test, needs fixes, or not suitable to use']], ['Jangan anggap aplikasi selamat hanya kerana ia berfungsi.', 'Tandakan bahagian yang memerlukan semakan IT atau keselamatan maklumat.'], true],
+      ['vibe', ['Skrip Ujian Aplikasi', 'App Test Scripts'], ['Menyediakan skrip ujian manual dan automatik untuk aplikasi yang dibangunkan.', 'Prepare manual and automated test scripts for a developed app.'], ['Selepas aplikasi siap dibina atau selepas perubahan fungsi dibuat.', 'After an app is built or after feature changes are made.'], ['Penerangan aplikasi, ciri utama, aliran pengguna, input, output, peraturan validasi.', 'App description, main features, user flows, inputs, outputs, validation rules.'], ['Skrip ujian untuk aplikasi carian template.', 'Test scripts for a template search app.'], ['jurutera QA dan penguji aplikasi web', 'a QA engineer and web application tester'], ['menyediakan skrip ujian lengkap untuk mengesahkan aplikasi', 'prepare complete test scripts to validate the app'], ['PENERANGAN APLIKASI, CIRI, ALIRAN PENGGUNA, INPUT, OUTPUT, VALIDASI', 'APP DESCRIPTION, FEATURES, USER FLOWS, INPUTS, OUTPUTS, VALIDATION'], [['Pelan ujian ringkas', 'Kes ujian manual langkah demi langkah', 'Data ujian', 'Jangkaan keputusan', 'Kes negatif dan edge case', 'Skrip ujian automatik jika sesuai', 'Checklist sebelum penerbitan'], ['Short test plan', 'Step-by-step manual test cases', 'Test data', 'Expected results', 'Negative and edge cases', 'Automated test script if suitable', 'Pre-release checklist']], ['Pastikan ujian merangkumi desktop dan mudah alih.', 'Nyatakan jika maklumat tambahan diperlukan untuk menulis skrip automatik.']],
+      ['vibe', ['State Aplikasi Yang Dibangunkan', 'Developed App State Summary'], ['Mendokumenkan keadaan semasa aplikasi supaya mudah disambung, disemak atau diserah kepada orang lain.', 'Document the current state of an app so it can be continued, reviewed, or handed over.'], ['Apabila aplikasi sudah ada versi prototaip, separuh siap, atau hendak diserah kepada pasukan lain.', 'When an app has a prototype, is partially complete, or needs handover to another team.'], ['Nama aplikasi, versi semasa, ciri siap, isu terbuka, fail utama, cara menjalankan, langkah seterusnya.', 'App name, current version, completed features, open issues, key files, how to run, next steps.'], ['Ringkasan state aplikasi portal staf selepas iterasi pertama.', 'State summary for a staff portal app after the first iteration.'], ['pengurus produk teknikal yang menulis dokumentasi handover', 'a technical product manager writing handover documentation'], ['meringkaskan state semasa aplikasi yang dibangunkan', 'summarize the current state of the developed app'], ['NAMA APLIKASI, VERSI, CIRI SIAP, ISU, FAIL, CARA RUN, LANGKAH SETERUSNYA', 'APP NAME, VERSION, COMPLETED FEATURES, ISSUES, FILES, HOW TO RUN, NEXT STEPS'], [['Status keseluruhan', 'Ciri yang sudah siap', 'Ciri belum siap', 'Bug atau risiko diketahui', 'Cara menjalankan aplikasi', 'Kebergantungan atau fail penting', 'Cadangan langkah seterusnya'], ['Overall status', 'Completed features', 'Incomplete features', 'Known bugs or risks', 'How to run the app', 'Dependencies or important files', 'Recommended next steps']], ['Bezakan fakta daripada andaian.', 'Jangan nyatakan sesuatu sudah siap jika belum diuji.'], true]
+    ];
+
+    const templates = templateSpecs.map((item, index) => ({
+      id: `template-${index + 1}`,
+      category: item[0],
+      bm: {
+        title: item[1][0],
+        purpose: item[2][0],
+        when: item[3][0],
+        inputs: item[4][0],
+        example: item[5][0],
+        prompt: makePrompt('bm', item[6][0], item[7][0], item[8][0], item[9][0], item[10] || [], item[11] || false)
+      },
+      en: {
+        title: item[1][1],
+        purpose: item[2][1],
+        when: item[3][1],
+        inputs: item[4][1],
+        example: item[5][1],
+        prompt: makePrompt('en', item[6][1], item[7][1], item[8][1], item[9][1], item[10] || [], item[11] || false)
+      }
+    }));
+
+    const reviewTools = [
+      {
+        id: 'basic',
+        bm: {
+          title: 'Semakan Asas Prompt',
+          purpose: 'Menyemak sama ada prompt jelas, lengkap dan mudah digunakan.',
+          instructions: 'Tampal prompt anda dan minta AI menilai kekuatan serta kelemahannya.',
+          template: makePrompt('bm', 'penilai prompt', 'menilai prompt berikut', 'TAMPAL PROMPT DI SINI', ['Skor untuk kejelasan, konteks, format, peraturan dan kegunaan', 'Kekuatan', 'Kelemahan', 'Versi prompt yang ditambah baik'], [], true)
+        },
+        en: {
+          title: 'Basic Prompt Evaluation',
+          purpose: 'Check whether a prompt is clear, complete, and usable.',
+          instructions: 'Paste your prompt and ask AI to assess its strengths and weaknesses.',
+          template: makePrompt('en', 'a prompt evaluator', 'evaluate the following prompt', 'PASTE PROMPT HERE', ['Scores for clarity, context, format, rules, and usefulness', 'Strengths', 'Weaknesses', 'Improved prompt version'], [], true)
+        }
+      },
+      {
+        id: 'scorecard',
+        bm: {
+          title: 'Skor Prompt Lanjutan',
+          purpose: 'Menilai prompt menggunakan skor lebih terperinci.',
+          instructions: 'Gunakan untuk prompt penting atau bahan portfolio kerja.',
+          template: makePrompt('bm', 'penilai kualiti AI kanan', 'memberi skor prompt secara profesional', 'PROMPT, TUJUAN PROMPT, PENGGUNA SASARAN', ['Jadual skor 100 markah', 'Ulasan setiap kriteria', 'Risiko', 'Prompt ditambah baik', 'Kes ujian cadangan'])
+        },
+        en: {
+          title: 'Advanced Prompt Scorecard',
+          purpose: 'Evaluate a prompt using a more detailed scoring approach.',
+          instructions: 'Use for important prompts or work portfolio materials.',
+          template: makePrompt('en', 'a senior AI quality evaluator', 'score the prompt professionally', 'PROMPT, PROMPT GOAL, TARGET USER', ['100-point score table', 'Feedback for each criterion', 'Risks', 'Improved prompt', 'Suggested test cases'])
+        }
+      },
+      {
+        id: 'output',
+        bm: {
+          title: 'Semakan Jawapan AI',
+          purpose: 'Menyemak sama ada jawapan AI sesuai digunakan.',
+          instructions: 'Tampal prompt asal dan jawapan AI untuk penilaian.',
+          template: makePrompt('bm', 'penyemak kualiti output AI', 'menilai jawapan AI', 'PROMPT ASAL DAN JAWAPAN AI', ['Ketepatan', 'Kelengkapan', 'Kejelasan', 'Pematuhan format', 'Risiko atau dakwaan tidak disokong', 'Versi jawapan yang lebih baik'], [], true)
+        },
+        en: {
+          title: 'AI Output Evaluation',
+          purpose: 'Check whether an AI response is suitable to use.',
+          instructions: 'Paste the original prompt and AI response for review.',
+          template: makePrompt('en', 'an AI output quality reviewer', 'evaluate the AI response', 'ORIGINAL PROMPT AND AI RESPONSE', ['Accuracy', 'Completeness', 'Clarity', 'Format compliance', 'Risks or unsupported claims', 'Improved response version'], [], true)
+        }
+      },
+      {
+        id: 'improve',
+        bm: {
+          title: 'Template Baiki Prompt',
+          purpose: 'Menukar prompt lemah kepada prompt yang lebih jelas dan berguna.',
+          instructions: 'Terangkan masalah output semasa dan hasil yang anda mahu.',
+          template: makePrompt('bm', 'jurutera prompt', 'menambah baik prompt berikut', 'PROMPT ASAL, MASALAH, HASIL DIKEHENDAKI, AUDIENS', ['Masalah prompt asal', 'Prompt baharu', 'Penjelasan perubahan', 'Senarai semak ujian'])
+        },
+        en: {
+          title: 'Prompt Improvement Template',
+          purpose: 'Turn a weak prompt into a clearer and more useful prompt.',
+          instructions: 'Describe the current output problem and the result you want.',
+          template: makePrompt('en', 'a prompt engineer', 'improve the following prompt', 'ORIGINAL PROMPT, PROBLEM, DESIRED RESULT, AUDIENCE', ['Problems in the original prompt', 'New prompt', 'Explanation of changes', 'Testing checklist'])
+        }
+      },
+      {
+        id: 'testing',
+        bm: {
+          title: 'Template Ujian Prompt',
+          purpose: 'Menguji sama ada prompt berfungsi dalam situasi berbeza.',
+          instructions: 'Gunakan untuk prompt yang akan digunakan berulang kali.',
+          template: makePrompt('bm', 'pakar ujian prompt', 'mencipta kes ujian untuk prompt', 'PROMPT, TUJUAN, PENGGUNA SASARAN', ['Kes biasa', 'Kes sukar', 'Kes maklumat tidak lengkap', 'Output dijangka', 'Tanda kegagalan'])
+        },
+        en: {
+          title: 'Prompt Testing Template',
+          purpose: 'Test whether a prompt works in different situations.',
+          instructions: 'Use for prompts that will be reused often.',
+          template: makePrompt('en', 'a prompt testing specialist', 'create test cases for the prompt', 'PROMPT, GOAL, TARGET USER', ['Normal cases', 'Difficult cases', 'Missing-information cases', 'Expected output', 'Failure signs'])
+        }
+      },
+      {
+        id: 'checklist',
+        bm: {
+          title: 'Senarai Semak Kualiti Prompt',
+          purpose: 'Semakan pantas sebelum menggunakan prompt.',
+          instructions: 'Semak setiap item sebelum menyalin prompt ke alat AI.',
+          template: 'Senarai Semak Kualiti Prompt\n\n1. Adakah peranan AI jelas?\n2. Adakah tugasan utama jelas?\n3. Adakah konteks mencukupi?\n4. Adakah format jawapan ditetapkan?\n5. Adakah peraturan dan had dinyatakan?\n6. Adakah prompt mengendalikan maklumat tidak lengkap?\n7. Adakah maklumat sulit telah dikeluarkan?\n8. Adakah output boleh disemak oleh manusia?\n9. Adakah prompt sesuai untuk audiens?\n10. Adakah langkah seterusnya jelas?'
+        },
+        en: {
+          title: 'Master Prompt Quality Checklist',
+          purpose: 'A quick check before using a prompt.',
+          instructions: 'Review each item before copying a prompt into an AI tool.',
+          template: 'Prompt Quality Checklist\n\n1. Is the AI role clear?\n2. Is the main task clear?\n3. Is there enough context?\n4. Is the output format defined?\n5. Are rules and constraints stated?\n6. Does the prompt handle missing information?\n7. Has confidential information been removed?\n8. Can the output be reviewed by a person?\n9. Is the prompt suitable for the audience?\n10. Are next steps clear?'
+        }
+      }
+    ];
+
+    let currentLang = localStorage.getItem('aiPromptStudioLang') || 'bm';
+    let currentSearch = '';
+    let currentCategory = 'all';
+    let toastTimer;
+
+    const $ = (id) => document.getElementById(id);
+
+    function t() {
+      return ui[currentLang];
+    }
+
+    function categoryName(id) {
+      return categories.find((category) => category.id === id)[currentLang];
+    }
+
+    function setText(id, value) {
+      $(id).textContent = value;
+    }
+
+    function renderStaticText() {
+      document.documentElement.lang = currentLang === 'bm' ? 'ms' : 'en';
+      const copy = t();
+      setText('heroEyebrow', copy.heroEyebrow);
+      setText('heroTitle', copy.heroTitle);
+      setText('heroSubtitle', copy.heroSubtitle);
+      setText('heroDescription', copy.heroDescription);
+      setText('heroPrimary', copy.heroPrimary);
+      setText('heroSecondary', copy.heroSecondary);
+      setText('previewTitle', copy.previewTitle);
+      setText('whyKicker', copy.whyKicker);
+      setText('whyTitle', copy.whyTitle);
+      setText('whyIntro', copy.whyIntro);
+      setText('howKicker', copy.howKicker);
+      setText('howTitle', copy.howTitle);
+      setText('reminderTitle', copy.reminderTitle);
+      setText('reminderText', copy.reminderText);
+      setText('formulaKicker', copy.formulaKicker);
+      setText('formulaTitle', copy.formulaTitle);
+      setText('formulaIntro', copy.formulaIntro);
+      setText('formulaText', copy.formulaText);
+      setText('formulaExample', copy.formulaExample);
+      setText('templatesKicker', copy.templatesKicker);
+      setText('templatesTitle', copy.templatesTitle);
+      setText('templatesIntro', copy.templatesIntro);
+      setText('searchLabel', copy.searchLabel);
+      setText('filterLabel', copy.filterLabel);
+      setText('totalCount', copy.totalTemplates(templates.length));
+      setText('emptyState', copy.noResults);
+      setText('reviewKicker', copy.reviewKicker);
+      setText('reviewTitle', copy.reviewTitle);
+      setText('reviewIntro', copy.reviewIntro);
+      setText('safeKicker', copy.safeKicker);
+      setText('safeTitle', copy.safeTitle);
+      setText('safeIntro', copy.safeIntro);
+      setText('footerText', copy.footerText);
+      setText('footerYear', copy.year(new Date().getFullYear()));
+      $('searchInput').placeholder = copy.searchPlaceholder;
+    }
+
+    function renderNav() {
+      $('navLinks').innerHTML = t().nav.map(([id, label]) => `<a class="nav-link" href="#${id}">${label}</a>`).join('');
+      document.querySelectorAll('.nav-link').forEach((link) => {
+        link.addEventListener('click', () => closeMenu());
+      });
+    }
+
+    function renderHeroBits() {
+      $('heroPreview').innerHTML = t().preview.map((line) => `<div class="preview-line">${line}</div>`).join('');
+      $('benefits').innerHTML = t().benefits.map(([title, body], index) => `
+        <article class="benefit-card">
+          <div class="benefit-icon">${['✓', '↗', '◆'][index]}</div>
+          <h3>${title}</h3>
+          <p>${body}</p>
+        </article>
+      `).join('');
+      $('whyPoints').innerHTML = t().whyPoints.map((point, index) => `
+        <article class="card">
+          <div class="card-icon">${index + 1}</div>
+          <p>${point}</p>
+        </article>
+      `).join('');
+      $('steps').innerHTML = t().steps.map((step, index) => `
+        <article class="step-card">
+          <span class="step-number">${index + 1}</span>
+          <p>${step}</p>
+        </article>
+      `).join('');
+      $('safeCards').innerHTML = t().safeCards.map((item) => `
+        <article class="safety-card">
+          <div class="card-icon">✓</div>
+          <h3>${item}</h3>
+        </article>
+      `).join('');
+    }
+
+    function renderCategoryFilter() {
+      $('categoryFilter').innerHTML = categories.map((category) => `
+        <option value="${category.id}" ${category.id === currentCategory ? 'selected' : ''}>${category[currentLang]}</option>
+      `).join('');
+    }
+
+    function cardHtml(item, type = 'template') {
+      const copy = t();
+      const data = item[currentLang];
+      const category = type === 'template' ? `<span class="badge">${categoryName(item.category)}</span>` : '';
+      const extra = type === 'template' ? `
+        <div class="meta-block"><span class="meta-label">${copy.labels.when}</span><p>${data.when}</p></div>
+        <div class="meta-block"><span class="meta-label">${copy.labels.inputs}</span><p>${data.inputs}</p></div>
+        <div class="meta-block"><span class="meta-label">${copy.labels.example}</span><p>${data.example}</p></div>
+      ` : `
+        <div class="meta-block"><span class="meta-label">${currentLang === 'bm' ? 'Arahan' : 'Instructions'}</span><p>${data.instructions}</p></div>
+      `;
+      return `
+        <article class="${type === 'template' ? 'prompt-card' : 'eval-card'}" data-id="${item.id}">
+          <div class="${type === 'template' ? 'prompt-card-inner' : 'eval-card-inner'}">
+            ${category}
+            <h3>${data.title}</h3>
+            <div class="meta-block"><span class="meta-label">${copy.labels.purpose}</span><p>${data.purpose}</p></div>
+            ${extra}
+            <div class="prompt-actions">
+              <button class="mini-btn toggle-prompt" type="button" data-id="${item.id}" aria-expanded="false">${copy.labels.show}</button>
+              <button class="mini-btn secondary copy-prompt" type="button" data-copy-id="${item.id}">${copy.labels.copy}</button>
+            </div>
+            <div>
+              <span class="meta-label">${copy.labels.prompt}</span>
+              <pre class="prompt-body">${escapeHtml(data.prompt || data.template)}</pre>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderTemplates() {
+      const query = currentSearch.trim().toLowerCase();
+      const filtered = templates.filter((item) => {
+        const data = item[currentLang];
+        const haystack = [data.title, categoryName(item.category), data.purpose, data.prompt].join(' ').toLowerCase();
+        const matchesSearch = !query || haystack.includes(query);
+        const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
+        return matchesSearch && matchesCategory;
+      });
+
+      $('templateGrid').innerHTML = filtered.map((item) => cardHtml(item)).join('');
+      $('resultCount').textContent = t().resultCount(filtered.length);
+      $('emptyState').classList.toggle('visible', filtered.length === 0);
+      wirePromptButtons($('templateGrid'));
+    }
+
+    function renderReviewTools() {
+      $('reviewTools').innerHTML = reviewTools.map((tool) => cardHtml(tool, 'review')).join('');
+      wirePromptButtons($('reviewTools'));
+    }
+
+    function wirePromptButtons(container) {
+      container.querySelectorAll('.toggle-prompt').forEach((button) => {
+        button.addEventListener('click', () => {
+          const card = button.closest('.prompt-card, .eval-card');
+          const expanded = card.classList.toggle('expanded');
+          button.textContent = expanded ? t().labels.hide : t().labels.show;
+          button.setAttribute('aria-expanded', String(expanded));
+        });
+      });
+
+      container.querySelectorAll('.copy-prompt').forEach((button) => {
+        button.addEventListener('click', () => {
+          const prompt = button.closest('.prompt-card, .eval-card').querySelector('.prompt-body').textContent.trim();
+          copyPrompt(prompt);
+        });
+      });
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function copyPrompt(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(showToast).catch(() => fallbackCopy(text));
+        return;
+      }
+      fallbackCopy(text);
+    }
+
+    function fallbackCopy(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      textarea.remove();
+      showToast();
+    }
+
+    function showToast() {
+      clearTimeout(toastTimer);
+      $('toast').textContent = t().labels.copied;
+      $('toast').classList.add('visible');
+      toastTimer = setTimeout(() => $('toast').classList.remove('visible'), 1600);
+    }
+
+    function closeMenu() {
+      $('navLinks').classList.remove('open');
+      $('mobileToggle').setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+    }
+
+    function switchLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('aiPromptStudioLang', lang);
+      document.querySelectorAll('.lang-button').forEach((button) => {
+        button.classList.toggle('active', button.dataset.lang === lang);
+      });
+      renderAll();
+    }
+
+    function renderAll() {
+      renderStaticText();
+      renderNav();
+      renderHeroBits();
+      renderCategoryFilter();
+      renderTemplates();
+      renderReviewTools();
+    }
+
+    $('searchInput').addEventListener('input', (event) => {
+      currentSearch = event.target.value;
+      renderTemplates();
+    });
+
+    $('categoryFilter').addEventListener('change', (event) => {
+      currentCategory = event.target.value;
+      renderTemplates();
+    });
+
+    document.querySelectorAll('.lang-button').forEach((button) => {
+      button.addEventListener('click', () => switchLanguage(button.dataset.lang));
+    });
+
+    $('mobileToggle').addEventListener('click', () => {
+      const open = $('navLinks').classList.toggle('open');
+      $('mobileToggle').setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('menu-open', open);
+    });
+
+    document.querySelector(`.lang-button[data-lang="${currentLang}"]`).classList.add('active');
+    renderAll();
+  </script>
+</body>
+</html>
