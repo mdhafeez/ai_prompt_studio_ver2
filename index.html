@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ms">
 <head>
   <meta charset="UTF-8" />
@@ -993,7 +993,7 @@
         heroEyebrow: 'Portal rujukan anda untuk penggunaan AI harian',
         heroTitle: 'AI Prompt Studio',
         heroSubtitle: 'Tulis prompt lebih jelas. Dapatkan jawapan AI lebih relevan.',
-        heroDescription: 'Selamat datang ke AI Prompt Studio — pusat rujukan ringkas untuk membantu anda menulis prompt AI yang lebih jelas, lengkap dan berkesan. Pilih template, isi maklumat penting, salin prompt, dan gunakan dengan mana-mana alat AI pilihan anda.',
+        heroDescription: 'Selamat datang ke AI Prompt Studio â€” pusat rujukan ringkas untuk membantu anda menulis prompt AI yang lebih jelas, lengkap dan berkesan. Pilih template, isi maklumat penting, salin prompt, dan gunakan dengan mana-mana alat AI pilihan anda.',
         heroPrimary: 'Teroka Template',
         heroSecondary: 'Belajar Formula Prompt',
         previewTitle: 'Contoh struktur prompt',
@@ -1065,8 +1065,8 @@
           'Dapatkan semakan untuk perkara penting',
           'AI membantu, bukan menggantikan tanggungjawab manusia'
         ],
-        footerText: 'Panduan ini disediakan untuk membantu staf menggunakan AI dengan lebih jelas, selamat dan berkesan. Sentiasa semak output AI sebelum digunakan.',
-        year: (year) => `© ${year} AI Prompt Studio`
+        footerText: 'Panduan ini disediakan untuk membantu anda menggunakan AI dengan lebih jelas, selamat dan berkesan. Sentiasa semak output AI sebelum digunakan.',
+        year: (year) => `CoE AI INTAN @ ${year}`
       },
       en: {
         nav: [
@@ -1081,7 +1081,7 @@
         heroEyebrow: 'Staff reference portal for everyday AI use',
         heroTitle: 'AI Prompt Studio',
         heroSubtitle: 'Write clearer prompts. Get more useful AI responses.',
-        heroDescription: 'Welcome to AI Prompt Studio — a simple reference hub to help staff write clearer, more complete, and more effective AI prompts. Choose a template, fill in the key details, copy the prompt, and use it with any AI tool of your choice.',
+        heroDescription: 'Welcome to AI Prompt Studio â€” a simple reference hub to help staff write clearer, more complete, and more effective AI prompts. Choose a template, fill in the key details, copy the prompt, and use it with any AI tool of your choice.',
         heroPrimary: 'Explore Templates',
         heroSecondary: 'Learn Prompt Formula',
         previewTitle: 'Prompt structure example',
@@ -1154,7 +1154,7 @@
           'AI supports work but does not replace human responsibility'
         ],
         footerText: 'This guide is designed to help staff use AI more clearly, safely, and effectively. Always review AI output before use.',
-        year: (year) => `© ${year} AI Prompt Studio`
+        year: (year) => `CoE AI INTAN @ ${year}`
       }
     };
 
@@ -1413,7 +1413,7 @@
       $('heroPreview').innerHTML = t().preview.map((line) => `<div class="preview-line">${line}</div>`).join('');
       $('benefits').innerHTML = t().benefits.map(([title, body], index) => `
         <article class="benefit-card">
-          <div class="benefit-icon">${['✓', '↗', '◆'][index]}</div>
+          <div class="benefit-icon">${['âœ“', 'â†—', 'â—†'][index]}</div>
           <h3>${title}</h3>
           <p>${body}</p>
         </article>
@@ -1432,7 +1432,7 @@
       `).join('');
       $('safeCards').innerHTML = t().safeCards.map((item) => `
         <article class="safety-card">
-          <div class="card-icon">✓</div>
+          <div class="card-icon">âœ“</div>
           <h3>${item}</h3>
         </article>
       `).join('');
@@ -1600,3 +1600,5 @@
   </script>
 </body>
 </html>
+
+
