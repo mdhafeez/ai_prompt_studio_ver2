@@ -517,6 +517,45 @@
       padding: 28px;
     }
 
+    .compare-box {
+      margin-top: 18px;
+    }
+
+    .compare-box h3 {
+      margin: 0 0 12px;
+    }
+
+    .compare-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .compare-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      padding: 18px;
+    }
+
+    .compare-item.bad {
+      border-color: #f1c6c6;
+    }
+
+    .compare-item.good {
+      border-color: #bfe7d5;
+    }
+
+    .compare-item h4 {
+      margin: 0 0 8px;
+    }
+
+    .compare-item p {
+      color: var(--muted);
+      margin: 10px 0 0;
+    }
+
     .formula-text {
       color: var(--primary);
       font-size: clamp(1.35rem, 3vw, 2.1rem);
@@ -551,8 +590,9 @@
       border-radius: 22px;
       box-shadow: var(--shadow-soft);
       display: grid;
+      align-items: end;
       gap: 14px;
-      grid-template-columns: minmax(240px, 1fr) minmax(220px, 320px);
+      grid-template-columns: minmax(220px, 1fr) minmax(190px, 240px) minmax(220px, 280px) auto;
       margin-bottom: 22px;
       padding: 16px;
     }
@@ -574,6 +614,41 @@
       min-height: 46px;
       padding: 10px 12px;
       width: 100%;
+    }
+
+    .reset-btn {
+      background: #eef4ff;
+      border: 1px solid #cfdcf5;
+      border-radius: 12px;
+      color: var(--primary);
+      font-weight: 900;
+      min-height: 46px;
+      padding: 10px 14px;
+      white-space: nowrap;
+    }
+
+    .reset-btn:hover,
+    .reset-btn:focus-visible {
+      background: #e1ebff;
+    }
+
+    .filter-summary {
+      background: #f8fbff;
+      border: 1px solid #dbe6f8;
+      border-radius: 18px;
+      color: var(--muted);
+      display: none;
+      font-weight: 700;
+      margin: -6px 0 18px;
+      padding: 14px 16px;
+    }
+
+    .filter-summary.visible {
+      display: block;
+    }
+
+    .filter-summary strong {
+      color: var(--text);
     }
 
     .result-row {
@@ -631,6 +706,24 @@
       padding: 6px 10px;
     }
 
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .style-badge {
+      background: #f0f9fb;
+      border-color: #c5e9ee;
+      color: #087180;
+    }
+
+    .level-badge {
+      background: #fff7e8;
+      border-color: #f1d7a6;
+      color: #8a5608;
+    }
+
     .meta-block {
       border-top: 1px solid #edf1f7;
       padding-top: 12px;
@@ -672,6 +765,11 @@
     .mini-btn.secondary {
       background: #eef4ff;
       color: var(--primary);
+    }
+
+    .mini-btn.copied {
+      background: #dff7ed;
+      color: var(--success);
     }
 
     .prompt-body {
@@ -792,6 +890,10 @@
         grid-template-columns: 1fr;
       }
 
+      .reset-btn {
+        width: 100%;
+      }
+
       .template-grid,
       .tools-grid,
       .point-grid,
@@ -824,6 +926,7 @@
 
       .hero-grid,
       .benefits,
+      .compare-grid,
       .template-grid,
       .tools-grid,
       .point-grid,
@@ -856,6 +959,7 @@
       .mini-btn {
         width: 100%;
       }
+
     }
   </style>
 </head>
@@ -940,6 +1044,7 @@
           <p class="formula-text" id="formulaText"></p>
           <pre class="code-box" id="formulaExample"></pre>
         </div>
+        <div class="compare-box" id="promptCompare"></div>
       </div>
     </section>
 
@@ -961,7 +1066,13 @@
             <label for="categoryFilter" id="filterLabel"></label>
             <select id="categoryFilter"></select>
           </div>
+          <div class="field">
+            <label for="styleFilter" id="styleFilterLabel"></label>
+            <select id="styleFilter"></select>
+          </div>
+          <button class="reset-btn" id="resetFilters" type="button"></button>
         </div>
+        <div class="filter-summary" id="filterSummary" aria-live="polite"></div>
         <div class="result-row">
           <span id="resultCount" aria-live="polite"></span>
           <span id="totalCount"></span>
@@ -1072,11 +1183,28 @@
         formulaIntro: 'Gunakan formula ini apabila anda mahu menulis prompt sendiri tanpa template.',
         formulaText: 'Peranan + Tugasan + Konteks + Format Jawapan + Peraturan + Semakan Kualiti',
         formulaExample: 'Anda ialah [peranan].\nTugas anda ialah [tugasan].\nGunakan konteks berikut: [konteks].\nBerikan jawapan dalam format [format].\nIkut peraturan berikut: [peraturan].\nSebelum selesai, semak [kriteria kualiti].',
+        compareTitle: 'Contoh: Prompt Lemah vs Prompt Baik',
+        compareBadTitle: 'Prompt lemah',
+        compareBadPrompt: 'Tolong buat ringkasan mesyuarat ini.',
+        compareBadNote: 'Terlalu umum. AI tidak tahu peranan, format, tahap detail, atau perkara yang perlu dielakkan.',
+        compareGoodTitle: 'Prompt baik',
+        compareGoodPrompt: 'Anda ialah pembantu eksekutif. Ringkaskan nota mesyuarat berikut kepada keputusan, tindakan susulan, pemilik tindakan dan tarikh akhir. Jangan cipta maklumat. Jika maklumat tiada, tulis "Tidak diberikan."',
+        compareGoodNote: 'Lebih jelas kerana ada peranan, tugasan, format output, peraturan dan cara mengendalikan maklumat tidak lengkap.',
         templatesKicker: 'Perpustakaan prompt',
         templatesTitle: 'Template Prompt Untuk Tugasan Harian',
         templatesIntro: 'Cari, tapis, buka, dan salin template yang sesuai untuk kerja anda.',
         searchLabel: 'Cari',
         filterLabel: 'Kategori',
+        styleFilterLabel: 'Prompt Style',
+        allPromptStyles: 'Semua style',
+        resetFilters: 'Reset',
+        filterSummary: (count, category, style, search) => {
+          const parts = [];
+          if (category) parts.push(`Kategori: ${category}`);
+          if (style) parts.push(`Prompt Style: ${style}`);
+          if (search) parts.push(`Carian: "${search}"`);
+          return `Menunjukkan ${count} template${parts.length ? ` untuk ${parts.join(', ')}` : ''}.`;
+        },
         searchPlaceholder: 'Cari template prompt...',
         totalTemplates: (count) => `${count} template tersedia`,
         noResults: 'Tiada template ditemui.',
@@ -1086,8 +1214,13 @@
           when: 'Bila Digunakan',
           inputs: 'Input Diperlukan',
           prompt: 'Template Prompt',
+          promptStyle: 'Prompt Style',
+          styleWhy: 'Cara prompt dibina',
+          difficulty: 'Tahap',
+          bestFor: 'Sesuai Untuk',
           example: 'Contoh Kegunaan',
           copy: 'Salin Prompt',
+          copiedButton: 'Disalin',
           show: 'Tunjuk Prompt',
           hide: 'Sembunyi Prompt',
           copied: 'Prompt disalin!'
@@ -1160,11 +1293,28 @@
         formulaIntro: 'Use this formula when you want to write your own prompt without a template.',
         formulaText: 'Role + Task + Context + Output Format + Rules + Quality Check',
         formulaExample: 'You are a [role].\nYour task is to [task].\nUse this context: [context].\nReturn the answer in this format: [format].\nFollow these rules: [rules].\nBefore finalizing, check for [quality criteria].',
+        compareTitle: 'Example: Weak Prompt vs Good Prompt',
+        compareBadTitle: 'Weak prompt',
+        compareBadPrompt: 'Please summarize this meeting.',
+        compareBadNote: 'Too general. The AI does not know the role, format, level of detail, or what to avoid.',
+        compareGoodTitle: 'Good prompt',
+        compareGoodPrompt: 'You are an executive assistant. Summarize the following meeting notes into decisions, follow-up actions, action owners, and deadlines. Do not invent information. If information is missing, write "Not provided."',
+        compareGoodNote: 'Clearer because it includes role, task, output format, rules, and how to handle missing information.',
         templatesKicker: 'Prompt library',
         templatesTitle: 'Prompt Templates for Daily Work',
         templatesIntro: 'Search, filter, open, and copy templates that fit your task.',
         searchLabel: 'Search',
         filterLabel: 'Category',
+        styleFilterLabel: 'Prompt Style',
+        allPromptStyles: 'All styles',
+        resetFilters: 'Reset',
+        filterSummary: (count, category, style, search) => {
+          const parts = [];
+          if (category) parts.push(`Category: ${category}`);
+          if (style) parts.push(`Prompt Style: ${style}`);
+          if (search) parts.push(`Search: "${search}"`);
+          return `Showing ${count} template${count === 1 ? '' : 's'}${parts.length ? ` for ${parts.join(', ')}` : ''}.`;
+        },
         searchPlaceholder: 'Search prompt templates...',
         totalTemplates: (count) => `${count} templates available`,
         noResults: 'No templates found.',
@@ -1174,8 +1324,13 @@
           when: 'When to Use',
           inputs: 'Required Inputs',
           prompt: 'Prompt Template',
+          promptStyle: 'Prompt Style',
+          styleWhy: 'How the prompt is built',
+          difficulty: 'Level',
+          bestFor: 'Best For',
           example: 'Example Use Case',
           copy: 'Copy Prompt',
+          copiedButton: 'Copied',
           show: 'Show Prompt',
           hide: 'Hide Prompt',
           copied: 'Prompt copied!'
@@ -1227,6 +1382,144 @@
       return `You are ${role}.\n\nYour task is to ${task}.\n\nContext and inputs:\n[${contextLabel}]\n\nReturn the answer in this format:\n${outputItems.map((item, index) => `${index + 1}. ${item}`).join('\n')}\n\nRules:\n${rules}${extras}\n\nBefore finalizing, check accuracy, tone, format, and any missing information.`;
     }
 
+    const promptStyles = {
+      structuredZeroShot: {
+        bm: {
+          name: 'Zero-shot berstruktur',
+          description: 'Tiada contoh jawapan diberi. Prompt dibina dengan peranan, tugasan, konteks, format output dan peraturan.'
+        },
+        en: {
+          name: 'Structured zero-shot',
+          description: 'No example answer is provided. The prompt uses role, task, context, output format, and rules.'
+        }
+      },
+      groundedZeroShot: {
+        bm: {
+          name: 'Grounded zero-shot',
+          description: 'AI diminta menggunakan hanya maklumat yang diberi supaya tidak menambah fakta sendiri.'
+        },
+        en: {
+          name: 'Grounded zero-shot',
+          description: 'The AI is asked to use only the provided information so it does not add unsupported facts.'
+        }
+      },
+      rewriteTransform: {
+        bm: {
+          name: 'Rewrite / transform',
+          description: 'Prompt menukar bahan sedia ada kepada versi baharu seperti ringkasan, emel, polisi atau teks yang lebih jelas.'
+        },
+        en: {
+          name: 'Rewrite / transform',
+          description: 'The prompt turns existing material into a new version such as a summary, email, policy, or clearer text.'
+        }
+      },
+      analysisPrompt: {
+        bm: {
+          name: 'Analytical prompt',
+          description: 'Prompt meminta AI menganalisis maklumat, menyusun dapatan, menilai risiko atau memberi cadangan.'
+        },
+        en: {
+          name: 'Analytical prompt',
+          description: 'The prompt asks AI to analyze information, organize findings, assess risks, or recommend actions.'
+        }
+      },
+      planningPrompt: {
+        bm: {
+          name: 'Planning prompt',
+          description: 'Prompt membina pelan, cadangan, spesifikasi atau langkah kerja berdasarkan input pengguna.'
+        },
+        en: {
+          name: 'Planning prompt',
+          description: 'The prompt creates a plan, proposal, specification, or work steps from user-provided inputs.'
+        }
+      },
+      critiqueReview: {
+        bm: {
+          name: 'Critique / review prompt',
+          description: 'Prompt meminta AI menyemak, menilai, mencari isu dan mencadangkan penambahbaikan.'
+        },
+        en: {
+          name: 'Critique / review prompt',
+          description: 'The prompt asks AI to review, evaluate, find issues, and suggest improvements.'
+        }
+      },
+      constrainedZeroShot: {
+        bm: {
+          name: 'Constrained zero-shot',
+          description: 'Prompt zero-shot dengan peraturan tambahan yang mengehadkan cara AI menjawab.'
+        },
+        en: {
+          name: 'Constrained zero-shot',
+          description: 'A zero-shot prompt with extra rules that constrain how the AI should respond.'
+        }
+      }
+    };
+
+    function inferPromptStyle(item) {
+      const category = item[0];
+      const titleBm = item[1][0].toLowerCase();
+      const titleEn = item[1][1].toLowerCase();
+      const taskBm = item[7][0].toLowerCase();
+      const taskEn = item[7][1].toLowerCase();
+      const combined = `${titleBm} ${titleEn} ${taskBm} ${taskEn}`;
+
+      if (item[11]) return 'groundedZeroShot';
+      if (/semak|review|evaluate|debug|test|uji|security|keselamatan|score|skor/.test(combined)) return 'critiqueReview';
+      if (/analisis|analysis|analyze|risk|risiko|swot|kpi|dashboard|laporan|report/.test(combined)) return 'analysisPrompt';
+      if (/pelan|plan|proposal|cadangan|specification|spesifikasi|brief|kurikulum|curriculum|sop|checklist|senarai semak|business case|kes perniagaan/.test(combined)) return 'planningPrompt';
+      if (/ringkasan|summar|rewrite|tulis semula|menulis semula|penambahbaikan emel|policy|polisi|email rewriter/.test(combined)) return 'rewriteTransform';
+      if (item[10] && item[10].length) return 'constrainedZeroShot';
+      return category === 'analysis' || category === 'risk' ? 'analysisPrompt' : 'structuredZeroShot';
+    }
+
+    const difficultyLevels = {
+      basic: { bm: 'Asas', en: 'Basic' },
+      intermediate: { bm: 'Pertengahan', en: 'Intermediate' },
+      advanced: { bm: 'Lanjutan', en: 'Advanced' }
+    };
+
+    function inferDifficulty(item, style) {
+      const category = item[0];
+      const combined = `${item[1][0]} ${item[1][1]} ${item[7][0]} ${item[7][1]}`.toLowerCase();
+      if (style === 'groundedZeroShot' || style === 'critiqueReview') return 'advanced';
+      if (category === 'risk' || category === 'analysis') return 'intermediate';
+      if (/business case|kes perniagaan|security|keselamatan|debug|swot|risk|risiko|kpi/.test(combined)) return 'advanced';
+      if (/plan|pelan|proposal|cadangan|specification|spesifikasi|curriculum|kurikulum|sop/.test(combined)) return 'intermediate';
+      return 'basic';
+    }
+
+    function inferBestFor(item, style) {
+      const category = item[0];
+      const combined = `${item[1][0]} ${item[1][1]} ${item[7][0]} ${item[7][1]}`.toLowerCase();
+
+      if (style === 'critiqueReview') {
+        return {
+          bm: 'Menyemak kualiti, mencari isu dan menambah baik hasil.',
+          en: 'Reviewing quality, finding issues, and improving outputs.'
+        };
+      }
+
+      if (/ringkasan|summary|summar/.test(combined)) {
+        return { bm: 'Menukar nota panjang kepada ringkasan tindakan.', en: 'Turning long notes into action-focused summaries.' };
+      }
+      if (/email|emel|announcement|pengumuman|complaint|aduan|social|media/.test(combined)) {
+        return { bm: 'Membina komunikasi kerja yang jelas dan profesional.', en: 'Creating clear and professional workplace communication.' };
+      }
+      if (/plan|pelan|proposal|cadangan|specification|spesifikasi|brief|kurikulum|curriculum|sop/.test(combined)) {
+        return { bm: 'Merancang struktur, langkah kerja atau dokumen cadangan.', en: 'Planning structure, work steps, or proposal documents.' };
+      }
+      if (/analysis|analisis|risk|risiko|swot|kpi|report|laporan/.test(combined)) {
+        return { bm: 'Menganalisis maklumat dan menyusun cadangan tindakan.', en: 'Analyzing information and organizing recommended actions.' };
+      }
+      if (category === 'hr') {
+        return { bm: 'Menyokong proses HR dengan output yang lebih tersusun.', en: 'Supporting HR workflows with more structured outputs.' };
+      }
+      if (category === 'vibe') {
+        return { bm: 'Menyediakan arahan yang jelas untuk membina atau menyemak aplikasi.', en: 'Preparing clear instructions to build or review an app.' };
+      }
+      return { bm: 'Memulakan tugasan harian dengan prompt yang lengkap.', en: 'Starting daily tasks with a complete prompt.' };
+    }
+
     const templateSpecs = [
       ['communication', ['Ringkasan Mesyuarat', 'Meeting Summary'], ['Menukar nota mesyuarat kepada ringkasan tindakan yang jelas.', 'Turn meeting notes into a clear action-focused summary.'], ['Selepas mesyuarat, perbincangan projek, bengkel atau sesi susulan.', 'After meetings, project discussions, workshops, or follow-up sessions.'], ['Nota mesyuarat, tarikh, peserta, keputusan, tindakan.', 'Meeting notes, date, attendees, decisions, action items.'], ['Minit mesyuarat jabatan dengan tindakan susulan.', 'Department meeting minutes with follow-up actions.'], ['pembantu eksekutif profesional', 'a professional executive assistant'], ['meringkaskan nota mesyuarat kepada ringkasan perniagaan yang tersusun', 'summarize meeting notes into an organized business summary'], ['TAMPAL NOTA MESYUARAT DI SINI', 'PASTE MEETING NOTES HERE'], [['Tajuk mesyuarat', 'Tarikh', 'Peserta', 'Isi penting', 'Keputusan', 'Tindakan susulan dengan pemilik dan tarikh akhir', 'Risiko atau isu', 'Maklumat tidak diberikan'], ['Meeting title', 'Date', 'Attendees', 'Key points', 'Decisions', 'Follow-up actions with owner and deadline', 'Risks or issues', 'Missing information']]],
       ['communication', ['Penulis Emel Profesional', 'Professional Email Writer'], ['Menulis emel kerja yang jelas, sopan dan berkesan.', 'Write clear, polite, and effective workplace emails.'], ['Untuk permintaan rasmi, susulan, makluman, peringatan atau pengumuman.', 'For formal requests, follow-ups, updates, reminders, or announcements.'], ['Tujuan emel, penerima, mesej utama, nada, tindakan diminta.', 'Email purpose, recipient, key message, tone, requested action.'], ['Emel susulan kepada pembekal tentang dokumen tertangguh.', 'Follow-up email to a supplier about delayed documents.'], ['pembantu komunikasi perniagaan', 'a business communication assistant'], ['menulis emel profesional berdasarkan butiran yang diberikan', 'write a professional email based on the provided details'], ['TUJUAN, PENERIMA, MESEJ UTAMA, NADA, TINDAKAN DIMINTA', 'PURPOSE, RECIPIENT, KEY MESSAGE, TONE, REQUESTED ACTION'], [['Subjek', 'Isi emel', 'Tindakan yang diminta', 'Penutup profesional'], ['Subject line', 'Email body', 'Requested action', 'Professional closing']]],
@@ -1269,26 +1562,34 @@
       ['vibe', ['State Aplikasi Yang Dibangunkan', 'Developed App State Summary'], ['Mendokumenkan keadaan semasa aplikasi supaya mudah disambung, disemak atau diserah kepada orang lain.', 'Document the current state of an app so it can be continued, reviewed, or handed over.'], ['Apabila aplikasi sudah ada versi prototaip, separuh siap, atau hendak diserah kepada pasukan lain.', 'When an app has a prototype, is partially complete, or needs handover to another team.'], ['Nama aplikasi, versi semasa, ciri siap, isu terbuka, fail utama, cara menjalankan, langkah seterusnya.', 'App name, current version, completed features, open issues, key files, how to run, next steps.'], ['Ringkasan state aplikasi portal staf selepas iterasi pertama.', 'State summary for a staff portal app after the first iteration.'], ['pengurus produk teknikal yang menulis dokumentasi handover', 'a technical product manager writing handover documentation'], ['meringkaskan state semasa aplikasi yang dibangunkan', 'summarize the current state of the developed app'], ['NAMA APLIKASI, VERSI, CIRI SIAP, ISU, FAIL, CARA RUN, LANGKAH SETERUSNYA', 'APP NAME, VERSION, COMPLETED FEATURES, ISSUES, FILES, HOW TO RUN, NEXT STEPS'], [['Status keseluruhan', 'Ciri yang sudah siap', 'Ciri belum siap', 'Bug atau risiko diketahui', 'Cara menjalankan aplikasi', 'Kebergantungan atau fail penting', 'Cadangan langkah seterusnya'], ['Overall status', 'Completed features', 'Incomplete features', 'Known bugs or risks', 'How to run the app', 'Dependencies or important files', 'Recommended next steps']], ['Bezakan fakta daripada andaian.', 'Jangan nyatakan sesuatu sudah siap jika belum diuji.'], true]
     ];
 
-    const templates = templateSpecs.map((item, index) => ({
-      id: `template-${index + 1}`,
-      category: item[0],
-      bm: {
-        title: item[1][0],
-        purpose: item[2][0],
-        when: item[3][0],
-        inputs: item[4][0],
-        example: item[5][0],
-        prompt: makePrompt('bm', item[6][0], item[7][0], item[8][0], item[9][0], item[10] || [], item[11] || false)
-      },
-      en: {
-        title: item[1][1],
-        purpose: item[2][1],
-        when: item[3][1],
-        inputs: item[4][1],
-        example: item[5][1],
-        prompt: makePrompt('en', item[6][1], item[7][1], item[8][1], item[9][1], item[10] || [], item[11] || false)
-      }
-    }));
+    const templates = templateSpecs.map((item, index) => {
+      const style = inferPromptStyle(item);
+      const difficulty = inferDifficulty(item, style);
+      const bestFor = inferBestFor(item, style);
+      return {
+        id: `template-${index + 1}`,
+        category: item[0],
+        style,
+        difficulty,
+        bestFor,
+        bm: {
+          title: item[1][0],
+          purpose: item[2][0],
+          when: item[3][0],
+          inputs: item[4][0],
+          example: item[5][0],
+          prompt: makePrompt('bm', item[6][0], item[7][0], item[8][0], item[9][0], item[10] || [], item[11] || false)
+        },
+        en: {
+          title: item[1][1],
+          purpose: item[2][1],
+          when: item[3][1],
+          inputs: item[4][1],
+          example: item[5][1],
+          prompt: makePrompt('en', item[6][1], item[7][1], item[8][1], item[9][1], item[10] || [], item[11] || false)
+        }
+      };
+    });
 
     const reviewTools = [
       {
@@ -1386,6 +1687,7 @@
     let currentLang = localStorage.getItem('aiPromptStudioLang') || 'bm';
     let currentSearch = '';
     let currentCategory = 'all';
+    let currentStyle = 'all';
     let toastTimer;
 
     const $ = (id) => document.getElementById(id);
@@ -1396,6 +1698,14 @@
 
     function categoryName(id) {
       return categories.find((category) => category.id === id)[currentLang];
+    }
+
+    function validCategory(id) {
+      return categories.some((category) => category.id === id);
+    }
+
+    function validStyle(id) {
+      return Object.prototype.hasOwnProperty.call(promptStyles, id);
     }
 
     function setText(id, value) {
@@ -1429,6 +1739,8 @@
       setText('templatesIntro', copy.templatesIntro);
       setText('searchLabel', copy.searchLabel);
       setText('filterLabel', copy.filterLabel);
+      setText('styleFilterLabel', copy.styleFilterLabel);
+      setText('resetFilters', copy.resetFilters);
       setText('totalCount', copy.totalTemplates(templates.length));
       setText('emptyState', copy.noResults);
       setText('reviewKicker', copy.reviewKicker);
@@ -1440,6 +1752,7 @@
       setText('footerText', copy.footerText);
       setText('footerYear', copy.year(new Date().getFullYear()));
       $('searchInput').placeholder = copy.searchPlaceholder;
+      $('searchInput').value = currentSearch;
     }
 
     function renderNav() {
@@ -1479,16 +1792,97 @@
       `).join('');
     }
 
+    function renderPromptCompare() {
+      const copy = t();
+      $('promptCompare').innerHTML = `
+        <h3>${escapeHtml(copy.compareTitle)}</h3>
+        <div class="compare-grid">
+          <article class="compare-item bad">
+            <h4>${escapeHtml(copy.compareBadTitle)}</h4>
+            <pre class="code-box">${escapeHtml(copy.compareBadPrompt)}</pre>
+            <p>${escapeHtml(copy.compareBadNote)}</p>
+          </article>
+          <article class="compare-item good">
+            <h4>${escapeHtml(copy.compareGoodTitle)}</h4>
+            <pre class="code-box">${escapeHtml(copy.compareGoodPrompt)}</pre>
+            <p>${escapeHtml(copy.compareGoodNote)}</p>
+          </article>
+        </div>
+      `;
+    }
+
     function renderCategoryFilter() {
       $('categoryFilter').innerHTML = categories.map((category) => `
         <option value="${category.id}" ${category.id === currentCategory ? 'selected' : ''}>${category[currentLang]}</option>
       `).join('');
     }
 
+    function renderStyleFilter() {
+      const copy = t();
+      const options = Object.entries(promptStyles).map(([id, style]) => `
+        <option value="${id}" ${id === currentStyle ? 'selected' : ''}>${style[currentLang].name}</option>
+      `).join('');
+      $('styleFilter').innerHTML = `<option value="all">${copy.allPromptStyles}</option>${options}`;
+      $('styleFilter').value = currentStyle;
+    }
+
+    function renderFilterSummary(count) {
+      const query = currentSearch.trim();
+      const category = currentCategory === 'all' ? '' : categoryName(currentCategory);
+      const style = currentStyle === 'all' ? null : promptStyles[currentStyle][currentLang];
+      const hasFilters = Boolean(query || category || style);
+
+      if (!hasFilters) {
+        $('filterSummary').classList.remove('visible');
+        $('filterSummary').innerHTML = '';
+        return;
+      }
+
+      const summary = escapeHtml(t().filterSummary(count, category, style ? style.name : '', query));
+      const styleDescription = style ? `<br><strong>${escapeHtml(style.name)}</strong>: ${escapeHtml(style.description)}` : '';
+      $('filterSummary').innerHTML = `${summary}${styleDescription}`;
+      $('filterSummary').classList.add('visible');
+    }
+
+    function readFilterStateFromUrl() {
+      const [hashTarget, queryString] = window.location.hash.slice(1).split('?');
+      if (hashTarget !== 'templates' || !queryString) return;
+
+      const params = new URLSearchParams(queryString);
+      const search = params.get('q') || '';
+      const category = params.get('category') || 'all';
+      const style = params.get('style') || 'all';
+
+      currentSearch = search;
+      currentCategory = validCategory(category) ? category : 'all';
+      currentStyle = style === 'all' || validStyle(style) ? style : 'all';
+    }
+
+    function updateFilterUrl() {
+      const params = new URLSearchParams();
+      const query = currentSearch.trim();
+      if (query) params.set('q', query);
+      if (currentCategory !== 'all') params.set('category', currentCategory);
+      if (currentStyle !== 'all') params.set('style', currentStyle);
+
+      const nextHash = params.toString() ? `#templates?${params.toString()}` : '#templates';
+      if (window.location.hash !== nextHash) {
+        history.replaceState(null, '', nextHash);
+      }
+    }
+
     function cardHtml(item, type = 'template') {
       const copy = t();
       const data = item[currentLang];
-      const category = type === 'template' ? `<span class="badge">${categoryName(item.category)}</span>` : '';
+      const style = type === 'template' ? promptStyles[item.style][currentLang] : null;
+      const difficulty = type === 'template' ? difficultyLevels[item.difficulty][currentLang] : '';
+      const badges = type === 'template' ? `
+        <div class="badge-row">
+          <span class="badge">${categoryName(item.category)}</span>
+          <span class="badge style-badge">${style.name}</span>
+          <span class="badge level-badge">${difficulty}</span>
+        </div>
+      ` : '';
       const extra = type === 'template' ? `
         <div class="meta-block"><span class="meta-label">${copy.labels.when}</span><p>${data.when}</p></div>
         <div class="meta-block"><span class="meta-label">${copy.labels.inputs}</span><p>${data.inputs}</p></div>
@@ -1499,7 +1893,7 @@
       return `
         <article class="${type === 'template' ? 'prompt-card' : 'eval-card'}" data-id="${item.id}">
           <div class="${type === 'template' ? 'prompt-card-inner' : 'eval-card-inner'}">
-            ${category}
+            ${badges}
             <h3>${data.title}</h3>
             <div class="meta-block"><span class="meta-label">${copy.labels.purpose}</span><p>${data.purpose}</p></div>
             ${extra}
@@ -1520,15 +1914,20 @@
       const query = currentSearch.trim().toLowerCase();
       const filtered = templates.filter((item) => {
         const data = item[currentLang];
-        const haystack = [data.title, categoryName(item.category), data.purpose, data.prompt].join(' ').toLowerCase();
+        const style = promptStyles[item.style][currentLang];
+        const difficulty = difficultyLevels[item.difficulty][currentLang];
+        const bestFor = item.bestFor[currentLang];
+        const haystack = [data.title, categoryName(item.category), data.purpose, style.name, style.description, difficulty, bestFor, data.prompt].join(' ').toLowerCase();
         const matchesSearch = !query || haystack.includes(query);
         const matchesCategory = currentCategory === 'all' || item.category === currentCategory;
-        return matchesSearch && matchesCategory;
+        const matchesStyle = currentStyle === 'all' || item.style === currentStyle;
+        return matchesSearch && matchesCategory && matchesStyle;
       });
 
       $('templateGrid').innerHTML = filtered.map((item) => cardHtml(item)).join('');
       $('resultCount').textContent = t().resultCount(filtered.length);
       $('emptyState').classList.toggle('visible', filtered.length === 0);
+      renderFilterSummary(filtered.length);
       wirePromptButtons($('templateGrid'));
     }
 
@@ -1550,7 +1949,7 @@
       container.querySelectorAll('.copy-prompt').forEach((button) => {
         button.addEventListener('click', () => {
           const prompt = button.closest('.prompt-card, .eval-card').querySelector('.prompt-body').textContent.trim();
-          copyPrompt(prompt);
+          copyPrompt(prompt, button);
         });
       });
     }
@@ -1564,15 +1963,29 @@
         .replaceAll("'", '&#039;');
     }
 
-    function copyPrompt(text) {
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(showToast).catch(() => fallbackCopy(text));
-        return;
-      }
-      fallbackCopy(text);
+    function markCopied(button) {
+      if (!button) return;
+      const originalText = t().labels.copy;
+      button.textContent = t().labels.copiedButton;
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove('copied');
+      }, 1400);
     }
 
-    function fallbackCopy(text) {
+    function copyPrompt(text, button) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast();
+          markCopied(button);
+        }).catch(() => fallbackCopy(text, button));
+        return;
+      }
+      fallbackCopy(text, button);
+    }
+
+    function fallbackCopy(text, button) {
       const textarea = document.createElement('textarea');
       textarea.value = text;
       textarea.setAttribute('readonly', '');
@@ -1583,6 +1996,7 @@
       document.execCommand('copy');
       textarea.remove();
       showToast();
+      markCopied(button);
     }
 
     function showToast() {
@@ -1611,18 +2025,39 @@
       renderStaticText();
       renderNav();
       renderHeroBits();
+      renderPromptCompare();
       renderCategoryFilter();
+      renderStyleFilter();
       renderTemplates();
       renderReviewTools();
     }
 
     $('searchInput').addEventListener('input', (event) => {
       currentSearch = event.target.value;
+      updateFilterUrl();
       renderTemplates();
     });
 
     $('categoryFilter').addEventListener('change', (event) => {
       currentCategory = event.target.value;
+      updateFilterUrl();
+      renderTemplates();
+    });
+
+    $('styleFilter').addEventListener('change', (event) => {
+      currentStyle = event.target.value;
+      updateFilterUrl();
+      renderTemplates();
+    });
+
+    $('resetFilters').addEventListener('click', () => {
+      currentSearch = '';
+      currentCategory = 'all';
+      currentStyle = 'all';
+      $('searchInput').value = '';
+      $('categoryFilter').value = currentCategory;
+      $('styleFilter').value = currentStyle;
+      updateFilterUrl();
       renderTemplates();
     });
 
@@ -1636,6 +2071,7 @@
       document.body.classList.toggle('menu-open', open);
     });
 
+    readFilterStateFromUrl();
     document.querySelector(`.lang-button[data-lang="${currentLang}"]`).classList.add('active');
     renderAll();
   </script>
