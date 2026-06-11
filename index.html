@@ -385,6 +385,46 @@
       width: 44px;
     }
 
+    .benefit-icon::before,
+    .check-icon::before {
+      content: "";
+      display: block;
+    }
+
+    .icon-check::before,
+    .check-icon::before {
+      border-bottom: 3px solid currentColor;
+      border-right: 3px solid currentColor;
+      height: 18px;
+      transform: rotate(42deg);
+      width: 9px;
+    }
+
+    .icon-arrow::before {
+      border-right: 3px solid currentColor;
+      border-top: 3px solid currentColor;
+      height: 14px;
+      transform: translate(-2px, 2px) rotate(45deg);
+      width: 14px;
+    }
+
+    .icon-arrow::after {
+      background: currentColor;
+      content: "";
+      display: block;
+      height: 3px;
+      position: absolute;
+      transform: rotate(-45deg) translate(-1px, 0);
+      width: 24px;
+    }
+
+    .icon-diamond::before {
+      background: currentColor;
+      height: 16px;
+      transform: rotate(45deg);
+      width: 16px;
+    }
+
     .benefit-card h3,
     .card h3,
     .tool-card h3 {
@@ -1411,9 +1451,10 @@
 
     function renderHeroBits() {
       $('heroPreview').innerHTML = t().preview.map((line) => `<div class="preview-line">${line}</div>`).join('');
+      const benefitIcons = ['icon-check', 'icon-arrow', 'icon-diamond'];
       $('benefits').innerHTML = t().benefits.map(([title, body], index) => `
         <article class="benefit-card">
-          <div class="benefit-icon">${['&#10003;', '&#8599;', '&#9670;'][index]}</div>
+          <div class="benefit-icon ${benefitIcons[index]}" aria-hidden="true"></div>
           <h3>${title}</h3>
           <p>${body}</p>
         </article>
@@ -1432,7 +1473,7 @@
       `).join('');
       $('safeCards').innerHTML = t().safeCards.map((item) => `
         <article class="safety-card">
-          <div class="card-icon">&#10003;</div>
+          <div class="card-icon check-icon" aria-hidden="true"></div>
           <h3>${item}</h3>
         </article>
       `).join('');
