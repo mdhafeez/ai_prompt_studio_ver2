@@ -1570,6 +1570,7 @@
       { id: 'gemini', label: 'Gemini', icon: 'G', url: 'https://gemini.google.com/' },
       { id: 'deepseek', label: 'DeepSeek', icon: 'DS', url: 'https://chat.deepseek.com/' }
     ];
+    const studioShareUrl = 'https://ai-prompt-studio-ver2.onrender.com';
 
     function inferDifficulty(item, style) {
       const category = item[0];
@@ -2116,18 +2117,15 @@
       }, 1400);
     }
 
-    function promptWithAppLinks(prompt) {
-      const appLinks = shareApps
-        .map((app) => `${app.label}: ${app.url}`)
-        .join('\n');
-      return `${prompt}\n\nAI apps:\n${appLinks}`;
+    function promptWithStudioLink(prompt) {
+      return `${prompt}\n\nDikongsi melalui AI Prompt Studio:\n${studioShareUrl}`;
     }
 
     function sharePrompt(prompt, appId) {
       const app = shareApps.find((item) => item.id === appId);
       if (!app) return;
 
-      const shareText = promptWithAppLinks(prompt);
+      const shareText = promptWithStudioLink(prompt);
       copyPrompt(shareText);
 
       if (app.id === 'whatsapp') {
@@ -2136,8 +2134,7 @@
       }
 
       if (app.id === 'facebook') {
-        const pageUrl = window.location.href.split('#')[0];
-        window.open(`${app.url}?u=${encodeURIComponent(pageUrl)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'noopener');
+        window.open(`${app.url}?u=${encodeURIComponent(studioShareUrl)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'noopener');
         return;
       }
 
