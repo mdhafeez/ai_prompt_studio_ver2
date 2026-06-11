@@ -45,6 +45,14 @@
       overflow: hidden;
     }
 
+    body.menu-open::after {
+      background: rgba(8, 18, 38, 0.28);
+      content: "";
+      inset: 0;
+      position: fixed;
+      z-index: 900;
+    }
+
     a {
       color: inherit;
       text-decoration: none;
@@ -941,10 +949,13 @@
         flex-direction: column;
         gap: 2px;
         left: 0;
+        max-height: calc(100dvh - 88px);
+        overflow-y: auto;
         padding: 14px 22px 20px;
         position: fixed;
         right: 0;
         top: 88px;
+        z-index: 1001;
       }
 
       .nav-links.open {
@@ -952,6 +963,8 @@
       }
 
       .nav-link {
+        border-radius: 12px;
+        padding: 12px 14px;
         width: 100%;
       }
 
@@ -981,8 +994,14 @@
 
     @media (max-width: 720px) {
       .nav-wrap {
-      min-height: 82px;
+        min-height: 82px;
         padding: 0 14px;
+      }
+
+      .nav-links {
+        max-height: calc(100dvh - 82px);
+        padding: 12px 14px 18px;
+        top: 82px;
       }
 
       .brand-mark {
