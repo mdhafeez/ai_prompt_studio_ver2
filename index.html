@@ -787,6 +787,67 @@
       color: var(--success);
     }
 
+    .share-panel {
+      background: #f8fbff;
+      border: 1px solid #dbe6f8;
+      border-radius: 14px;
+      display: none;
+      gap: 8px;
+      padding: 10px;
+    }
+
+    .prompt-card.share-open .share-panel,
+    .eval-card.share-open .share-panel {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .share-option {
+      align-items: center;
+      background: #fff;
+      border: 1px solid #d9e2f1;
+      border-radius: 999px;
+      color: #263853;
+      display: inline-flex;
+      font-size: 0.86rem;
+      font-weight: 900;
+      gap: 7px;
+      min-height: 36px;
+      padding: 7px 10px;
+    }
+
+    .share-icon {
+      align-items: center;
+      border-radius: 999px;
+      color: #fff;
+      display: inline-flex;
+      font-size: 0.72rem;
+      height: 22px;
+      justify-content: center;
+      min-width: 22px;
+      padding: 0 5px;
+    }
+
+    .share-icon.facebook {
+      background: #1877f2;
+    }
+
+    .share-icon.whatsapp {
+      background: #25d366;
+    }
+
+    .share-icon.chatgpt {
+      background: #111827;
+    }
+
+    .share-icon.gemini {
+      background: #4f46e5;
+    }
+
+    .share-icon.deepseek {
+      background: #2563eb;
+    }
+
     .prompt-body {
       display: none;
       margin-top: 6px;
@@ -1239,6 +1300,8 @@
           bestFor: 'Sesuai Untuk',
           example: 'Contoh Kegunaan',
           copy: 'Salin Prompt',
+          share: 'Kongsi Prompt',
+          shareReady: 'Prompt disalin. Buka aplikasi pilihan anda dan tampal prompt.',
           copiedButton: 'Disalin',
           show: 'Tunjuk Prompt',
           hide: 'Sembunyi Prompt',
@@ -1350,6 +1413,8 @@
           bestFor: 'Best For',
           example: 'Example Use Case',
           copy: 'Copy Prompt',
+          share: 'Share Prompt',
+          shareReady: 'Prompt copied. Open your preferred app and paste the prompt.',
           copiedButton: 'Copied',
           show: 'Show Prompt',
           hide: 'Hide Prompt',
@@ -1497,6 +1562,14 @@
       intermediate: { bm: 'Pertengahan', en: 'Intermediate' },
       advanced: { bm: 'Lanjutan', en: 'Advanced' }
     };
+
+    const shareApps = [
+      { id: 'facebook', label: 'Facebook', icon: 'f', url: 'https://www.facebook.com/sharer/sharer.php' },
+      { id: 'whatsapp', label: 'WhatsApp', icon: 'WA', url: 'https://wa.me/' },
+      { id: 'chatgpt', label: 'ChatGPT', icon: 'GPT', url: 'https://chatgpt.com/' },
+      { id: 'gemini', label: 'Gemini', icon: 'G', url: 'https://gemini.google.com/' },
+      { id: 'deepseek', label: 'DeepSeek', icon: 'DS', url: 'https://chat.deepseek.com/' }
+    ];
 
     function inferDifficulty(item, style) {
       const category = item[0];
@@ -1922,6 +1995,16 @@
           <span class="badge level-badge">${difficulty}</span>
         </div>
       ` : '';
+      const sharePanel = `
+        <div class="share-panel" aria-label="${copy.labels.share}">
+          ${shareApps.map((app) => `
+            <button class="share-option" type="button" data-share-app="${app.id}">
+              <span class="share-icon ${app.id}" aria-hidden="true">${app.icon}</span>
+              <span>${app.label}</span>
+            </button>
+          `).join('')}
+        </div>
+      `;
       const extra = type === 'template' ? `
         <div class="meta-block"><span class="meta-label">${copy.labels.when}</span><p>${data.when}</p></div>
         <div class="meta-block"><span class="meta-label">${copy.labels.inputs}</span><p>${data.inputs}</p></div>
@@ -1939,7 +2022,9 @@
             <div class="prompt-actions">
               <button class="mini-btn toggle-prompt" type="button" data-id="${item.id}" aria-expanded="false">${copy.labels.show}</button>
               <button class="mini-btn secondary copy-prompt" type="button" data-copy-id="${item.id}">${copy.labels.copy}</button>
+              <button class="mini-btn secondary share-prompt" type="button" aria-expanded="false">${copy.labels.share}</button>
             </div>
+            ${sharePanel}
             <div>
               <span class="meta-label">${copy.labels.prompt}</span>
               <pre class="prompt-body">${escapeHtml(data.prompt || data.template)}</pre>
@@ -1993,6 +2078,22 @@
           copyPrompt(prompt, button);
         });
       });
+
+      container.querySelectorAll('.share-prompt').forEach((button) => {
+        button.addEventListener('click', () => {
+          const card = button.closest('.prompt-card, .eval-card');
+          const expanded = card.classList.toggle('share-open');
+          button.setAttribute('aria-expanded', String(expanded));
+        });
+      });
+
+      container.querySelectorAll('.share-option').forEach((button) => {
+        button.addEventListener('click', () => {
+          const card = button.closest('.prompt-card, .eval-card');
+          const prompt = card.querySelector('.prompt-body').textContent.trim();
+          sharePrompt(prompt, button.dataset.shareApp);
+        });
+      });
     }
 
     function escapeHtml(value) {
@@ -2013,6 +2114,35 @@
         button.textContent = originalText;
         button.classList.remove('copied');
       }, 1400);
+    }
+
+    function promptWithAppLinks(prompt) {
+      const appLinks = shareApps
+        .map((app) => `${app.label}: ${app.url}`)
+        .join('\n');
+      return `${prompt}\n\nAI apps:\n${appLinks}`;
+    }
+
+    function sharePrompt(prompt, appId) {
+      const app = shareApps.find((item) => item.id === appId);
+      if (!app) return;
+
+      const shareText = promptWithAppLinks(prompt);
+      copyPrompt(shareText);
+
+      if (app.id === 'whatsapp') {
+        window.open(`${app.url}?text=${encodeURIComponent(shareText)}`, '_blank', 'noopener');
+        return;
+      }
+
+      if (app.id === 'facebook') {
+        const pageUrl = window.location.href.split('#')[0];
+        window.open(`${app.url}?u=${encodeURIComponent(pageUrl)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'noopener');
+        return;
+      }
+
+      window.open(app.url, '_blank', 'noopener');
+      showToast(t().labels.shareReady);
     }
 
     function copyPrompt(text, button) {
@@ -2040,9 +2170,9 @@
       markCopied(button);
     }
 
-    function showToast() {
+    function showToast(message = t().labels.copied) {
       clearTimeout(toastTimer);
-      $('toast').textContent = t().labels.copied;
+      $('toast').textContent = message;
       $('toast').classList.add('visible');
       toastTimer = setTimeout(() => $('toast').classList.remove('visible'), 1600);
     }
