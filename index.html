@@ -684,6 +684,7 @@
     }
 
     .template-grid,
+    .meta-prompt-grid,
     .tools-grid {
       display: grid;
       gap: 18px;
@@ -691,6 +692,7 @@
     }
 
     .prompt-card,
+    .meta-prompt-card,
     .eval-card {
       background: #fff;
       border: 1px solid var(--line);
@@ -704,12 +706,14 @@
     }
 
     .prompt-card:hover,
+    .meta-prompt-card:hover,
     .eval-card:hover {
       box-shadow: var(--shadow);
       transform: translateY(-2px);
     }
 
     .prompt-card-inner,
+    .meta-prompt-card-inner,
     .eval-card-inner {
       display: flex;
       flex: 1;
@@ -745,6 +749,95 @@
       background: #fff7e8;
       border-color: #f1d7a6;
       color: #8a5608;
+    }
+
+    .framework-badge {
+      background: #f3f0ff;
+      border-color: #ddd4ff;
+      color: #4f3aa3;
+    }
+
+    .meta-library-note {
+      background: linear-gradient(135deg, #f8fbff, #f2fff9);
+      border: 1px solid #cfe8dc;
+      border-radius: 20px;
+      color: #24364f;
+      font-weight: 800;
+      margin: -4px 0 18px;
+      padding: 16px;
+    }
+
+    .meta-controls {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: minmax(240px, 1fr) minmax(260px, 1.4fr);
+      margin-bottom: 16px;
+    }
+
+    .tab-list {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-tab {
+      background: #fff;
+      border: 1px solid #d8e2f1;
+      border-radius: 999px;
+      color: #2d3d58;
+      font-weight: 900;
+      min-height: 40px;
+      padding: 9px 13px;
+    }
+
+    .filter-tab.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .tooltip-trigger {
+      align-items: center;
+      background: #eef4ff;
+      border: 1px solid #cfdcf4;
+      border-radius: 999px;
+      color: var(--primary);
+      display: inline-flex;
+      font-size: 0.84rem;
+      font-weight: 900;
+      height: 26px;
+      justify-content: center;
+      margin-left: 8px;
+      position: relative;
+      width: 26px;
+    }
+
+    .tooltip-trigger::after {
+      background: #101a31;
+      border-radius: 10px;
+      bottom: calc(100% + 8px);
+      color: #fff;
+      content: attr(data-tooltip);
+      font-size: 0.78rem;
+      font-weight: 800;
+      left: 50%;
+      line-height: 1.4;
+      max-width: min(280px, 78vw);
+      opacity: 0;
+      padding: 9px 10px;
+      pointer-events: none;
+      position: absolute;
+      transform: translateX(-50%) translateY(4px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      width: max-content;
+      z-index: 20;
+    }
+
+    .tooltip-trigger:hover::after,
+    .tooltip-trigger:focus-visible::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     .meta-block {
@@ -882,6 +975,73 @@
       display: block;
     }
 
+    .modal-backdrop {
+      align-items: center;
+      background: rgba(12, 22, 42, 0.62);
+      display: none;
+      inset: 0;
+      justify-content: center;
+      padding: 22px;
+      position: fixed;
+      z-index: 1400;
+    }
+
+    .modal-backdrop.visible {
+      display: flex;
+    }
+
+    .prompt-modal {
+      background: #fff;
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      max-height: min(86vh, 820px);
+      max-width: 920px;
+      overflow: hidden;
+      width: min(100%, 920px);
+    }
+
+    .prompt-modal-header {
+      align-items: flex-start;
+      border-bottom: 1px solid #e4ebf5;
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      padding: 20px;
+    }
+
+    .prompt-modal-header h3 {
+      margin: 8px 0 0;
+    }
+
+    .prompt-modal-body {
+      overflow: auto;
+      padding: 20px;
+    }
+
+    .prompt-modal-body pre {
+      background: #f7f9fd;
+      border: 1px solid #dce6f3;
+      border-radius: 16px;
+      color: #1d2f4b;
+      font: 0.95rem/1.6 "Segoe UI", system-ui, sans-serif;
+      margin: 0;
+      min-height: 280px;
+      overflow: auto;
+      padding: 18px;
+      white-space: pre-wrap;
+    }
+
+    .prompt-modal-actions {
+      border-top: 1px solid #e4ebf5;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+      padding: 16px 20px;
+    }
+
     .safety-intro {
       background: linear-gradient(135deg, #fff, #eef8fb);
       border: 1px solid #ccecf0;
@@ -975,7 +1135,8 @@
       }
 
       .hero-grid,
-      .controls {
+      .controls,
+      .meta-controls {
         grid-template-columns: 1fr;
       }
 
@@ -984,6 +1145,7 @@
       }
 
       .template-grid,
+      .meta-prompt-grid,
       .tools-grid,
       .point-grid,
       .steps-grid,
@@ -1023,6 +1185,7 @@
       .benefits,
       .compare-grid,
       .template-grid,
+      .meta-prompt-grid,
       .tools-grid,
       .point-grid,
       .steps-grid,
@@ -1046,6 +1209,7 @@
       }
 
       .prompt-actions,
+      .prompt-modal-actions,
       .button-row {
         flex-direction: column;
       }
@@ -1053,6 +1217,18 @@
       .btn,
       .mini-btn {
         width: 100%;
+      }
+
+      .filter-tab {
+        flex: 1 1 auto;
+      }
+
+      .prompt-modal {
+        max-height: 92vh;
+      }
+
+      .prompt-modal-header {
+        flex-direction: column;
       }
 
     }
@@ -1178,7 +1354,36 @@
       </div>
     </section>
 
-    <section class="section alt" id="review">
+    <section class="section alt" id="meta-prompts">
+      <div class="container">
+        <div class="library-header">
+          <div class="section-heading">
+            <p class="section-kicker" id="metaKicker"></p>
+            <h2>
+              <span id="metaTitle"></span>
+              <span class="tooltip-trigger" id="metaTooltip" tabindex="0">?</span>
+            </h2>
+            <p id="metaIntro"></p>
+          </div>
+        </div>
+        <div class="meta-library-note" id="metaNote"></div>
+        <div class="meta-controls">
+          <div class="tab-list" id="metaTabs" role="tablist" aria-label="Thinking framework filter"></div>
+          <div class="field">
+            <label for="metaSearchInput" id="metaSearchLabel"></label>
+            <input id="metaSearchInput" type="search" autocomplete="off" />
+          </div>
+        </div>
+        <div class="result-row">
+          <span id="metaResultCount" aria-live="polite"></span>
+          <span id="metaTotalCount"></span>
+        </div>
+        <div class="meta-prompt-grid" id="metaPromptGrid"></div>
+        <div class="empty-state" id="metaEmptyState"></div>
+      </div>
+    </section>
+
+    <section class="section" id="review">
       <div class="container">
         <div class="section-heading">
           <p class="section-kicker" id="reviewKicker"></p>
@@ -1212,6 +1417,24 @@
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal-backdrop" id="metaPromptModal" role="dialog" aria-modal="true" aria-labelledby="modalPromptTitle">
+    <div class="prompt-modal">
+      <div class="prompt-modal-header">
+        <div>
+          <span class="badge framework-badge" id="modalPromptType"></span>
+          <h3 id="modalPromptTitle"></h3>
+        </div>
+        <button class="mini-btn secondary" id="closeMetaModal" type="button"></button>
+      </div>
+      <div class="prompt-modal-body">
+        <pre id="modalPromptBody"></pre>
+      </div>
+      <div class="prompt-modal-actions">
+        <button class="mini-btn secondary" id="modalCopyPrompt" type="button"></button>
+        <button class="mini-btn" id="modalClosePrompt" type="button"></button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const categories = [
@@ -1236,6 +1459,7 @@
           ['how', 'Cara Guna'],
           ['formula', 'Formula Prompt'],
           ['templates', 'Template'],
+          ['meta-prompts', 'Meta-Prompt'],
           ['review', 'Semak Prompt'],
           ['safe', 'Amalan Selamat']
         ],
@@ -1308,6 +1532,19 @@
         totalTemplates: (count) => `${count} template tersedia`,
         noResults: 'Tiada template ditemui.',
         resultCount: (count) => `${count} template sepadan`,
+        metaKicker: 'Perpustakaan cara berfikir',
+        metaTitle: 'Meta-Prompt Library',
+        metaIntro: 'Pilih framework pemikiran sebelum meminta AI menghasilkan output. Meta-prompt membantu AI menganalisis, menstruktur dan menilai jawapan dengan lebih mendalam.',
+        metaNote: 'Prompt biasa memberitahu AI apa yang perlu dibuat. Meta-prompt memberitahu AI bagaimana AI perlu berfikir sebelum menghasilkan jawapan.',
+        metaTooltip: 'Meta-prompt ialah arahan tahap tinggi yang menetapkan cara AI menganalisis masalah, bukan sekadar format jawapan.',
+        metaSearchLabel: 'Cari meta-prompt',
+        metaSearchPlaceholder: 'Cari nama, kegunaan atau keyword...',
+        metaNoResults: 'Tiada meta-prompt ditemui.',
+        metaResultCount: (count) => `${count} meta-prompt sepadan`,
+        metaTotalCount: (count) => `${count} meta-prompt tersedia`,
+        metaAll: 'All',
+        viewPrompt: 'View Prompt',
+        close: 'Tutup',
         labels: {
           purpose: 'Tujuan',
           when: 'Bila Digunakan',
@@ -1349,6 +1586,7 @@
           ['how', 'How to Use'],
           ['formula', 'Prompt Formula'],
           ['templates', 'Templates'],
+          ['meta-prompts', 'Meta-Prompt'],
           ['review', 'Prompt Review'],
           ['safe', 'Safe AI Use']
         ],
@@ -1421,6 +1659,19 @@
         totalTemplates: (count) => `${count} templates available`,
         noResults: 'No templates found.',
         resultCount: (count) => `${count} matching template${count === 1 ? '' : 's'}`,
+        metaKicker: 'Thinking framework library',
+        metaTitle: 'Meta-Prompt Library',
+        metaIntro: 'Choose a thinking framework before asking AI to produce an output. Meta-prompts help AI analyze, structure, and evaluate responses more deeply.',
+        metaNote: 'A normal prompt tells AI what to do. A meta-prompt tells AI how to think before producing the answer.',
+        metaTooltip: 'A meta-prompt is a higher-level instruction that defines how AI should analyze a problem, not only the response format.',
+        metaSearchLabel: 'Search meta-prompts',
+        metaSearchPlaceholder: 'Search by name, use case, or keyword...',
+        metaNoResults: 'No meta-prompts found.',
+        metaResultCount: (count) => `${count} matching meta-prompt${count === 1 ? '' : 's'}`,
+        metaTotalCount: (count) => `${count} meta-prompts available`,
+        metaAll: 'All',
+        viewPrompt: 'View Prompt',
+        close: 'Close',
         labels: {
           purpose: 'Purpose',
           when: 'When to Use',
@@ -1728,6 +1979,686 @@
       };
     });
 
+    const metaFrameworks = [
+      { id: 'all', bm: 'All', en: 'All' },
+      { id: 'strategy', bm: 'Strategy', en: 'Strategy' },
+      { id: 'futures', bm: 'Futures', en: 'Futures' },
+      { id: 'systems', bm: 'Systems', en: 'Systems' },
+      { id: 'critical', bm: 'Critical', en: 'Critical' },
+      { id: 'design', bm: 'Design', en: 'Design' },
+      { id: 'scientific', bm: 'Scientific', en: 'Scientific' }
+    ];
+
+    const metaPrompts = [
+      {
+        id: 'future-thinking',
+        framework: 'futures',
+        keywords: ['strategic foresight', 'horizon scanning', 'steep', 'scenario planning', 'backcasting', 'roadmap', 'policy'],
+        bm: {
+          title: 'Future Thinking Meta-Prompt',
+          description: 'Membantu AI membuat cadangan berdasarkan metodologi strategic foresight seperti Horizon Scanning, STEEP Analysis, Drivers of Change, Scenario Planning dan Backcasting.',
+          bestFor: 'Perancangan strategik, pembangunan roadmap, dasar awam, transformasi organisasi, pembangunan teknologi, latihan masa hadapan dan inovasi sektor awam.',
+          prompt: `Anda ialah Strategic Foresight Consultant, Future Thinking Specialist dan Policy Strategist.
+
+Tugas anda ialah menganalisis topik yang diberikan menggunakan kaedah future thinking dan strategic foresight. Jangan terus memberikan cadangan. Sebaliknya, gunakan proses analisis yang sistematik sebelum menghasilkan syor.
+
+Input pengguna:
+Topik:
+[Masukkan topik]
+
+Objektif:
+[Masukkan objektif]
+
+Sektor / Industri:
+[Masukkan sektor]
+
+Organisasi / Negara:
+[Masukkan konteks]
+
+Tempoh perancangan:
+[Contoh: 3 tahun, 5 tahun, sehingga 2030]
+
+Arahan analisis:
+
+1. Current State Assessment
+
+* Ringkaskan keadaan semasa.
+* Kenal pasti cabaran utama.
+* Kenal pasti kekangan.
+* Nyatakan andaian jika maklumat tidak lengkap.
+
+2. Horizon Scanning
+Kenal pasti perkembangan berkaitan daripada aspek:
+
+* Teknologi
+* Polisi
+* Ekonomi
+* Sosial
+* Alam sekitar
+* Industri
+* Global
+
+Bezakan antara:
+
+* Established Trend
+* Emerging Trend
+* Weak Signal
+
+3. STEEP Analysis
+Analisis faktor:
+
+* Social
+* Technological
+* Economic
+* Environmental
+* Political
+
+Terangkan bagaimana setiap faktor mempengaruhi topik dalam tempoh perancangan yang dipilih.
+
+4. Drivers of Change
+Kenal pasti pemacu perubahan utama.
+
+Bagi setiap pemacu, nyatakan:
+
+* Mengapa ia penting
+* Tahap impak
+* Tahap ketidakpastian
+
+5. Opportunities and Risks
+Senaraikan peluang dan risiko.
+
+Kategorikan kepada:
+
+* Jangka pendek
+* Jangka sederhana
+* Jangka panjang
+
+6. Scenario Planning
+Bina tiga senario:
+
+* Senario Optimistik
+* Senario Realistik
+* Senario Mencabar
+
+Bagi setiap senario, terangkan:
+
+* Bagaimana senario ini boleh berlaku
+* Implikasi kepada organisasi
+* Risiko utama
+* Peluang utama
+
+7. Backcasting
+Pilih senario paling realistik dan bina langkah ke belakang daripada masa hadapan kepada tindakan yang perlu dimulakan hari ini.
+
+8. Strategic Recommendations
+Cadangkan tindakan mengikut fasa:
+
+* Immediate
+* Short Term
+* Medium Term
+* Long Term
+
+Bagi setiap cadangan, nyatakan:
+
+* Rasional
+* Faedah
+* Risiko
+* Prasyarat
+
+9. Confidence Assessment
+Bagi setiap cadangan, nyatakan tahap keyakinan:
+
+* High Confidence
+* Medium Confidence
+* Low Confidence
+
+Jelaskan sebab penilaian tersebut.
+
+10. Assumptions and Evidence
+Nyatakan:
+
+* Andaian yang digunakan
+* Bahagian yang disokong oleh trend semasa
+* Bahagian yang merupakan hipotesis
+* Bahagian yang masih spekulatif
+* Rujukan atau jenis bukti yang diperlukan untuk mengesahkan cadangan
+
+Peraturan jawapan:
+
+* Jangan membuat ramalan mutlak.
+* Bezakan fakta, trend, hipotesis dan spekulasi.
+* Jangan beri cadangan generik.
+* Terangkan logik di sebalik setiap syor.
+* Jika maklumat tidak cukup, nyatakan dengan jelas.
+* Gunakan bahasa profesional, praktikal dan mudah difahami.
+* Pastikan jawapan boleh digunakan untuk perbincangan strategik atau pembentangan kepada pengurusan.`
+        },
+        en: {
+          title: 'Future Thinking Meta-Prompt',
+          description: 'Helps AI generate recommendations using strategic foresight methods such as Horizon Scanning, STEEP Analysis, Drivers of Change, Scenario Planning, and Backcasting.',
+          bestFor: 'Strategic planning, roadmap development, public policy, organizational transformation, technology development, future skills training, and public sector innovation.',
+          prompt: `You are a Strategic Foresight Consultant, Future Thinking Specialist, and Policy Strategist.
+
+Your task is to analyze the topic using future thinking and strategic foresight methods. Do not jump directly to recommendations. Use a systematic analysis process before producing advice.
+
+User input:
+Topic:
+[Enter topic]
+
+Objective:
+[Enter objective]
+
+Sector / Industry:
+[Enter sector]
+
+Organization / Country:
+[Enter context]
+
+Planning horizon:
+[Example: 3 years, 5 years, until 2030]
+
+Analysis instructions:
+
+1. Current State Assessment
+
+* Summarize the current state.
+* Identify key challenges.
+* Identify constraints.
+* State assumptions if information is incomplete.
+
+2. Horizon Scanning
+Identify relevant developments across:
+
+* Technology
+* Policy
+* Economy
+* Society
+* Environment
+* Industry
+* Global context
+
+Distinguish between:
+
+* Established Trend
+* Emerging Trend
+* Weak Signal
+
+3. STEEP Analysis
+Analyze:
+
+* Social
+* Technological
+* Economic
+* Environmental
+* Political
+
+Explain how each factor may influence the topic within the chosen planning horizon.
+
+4. Drivers of Change
+Identify the main drivers of change.
+
+For each driver, state:
+
+* Why it matters
+* Impact level
+* Uncertainty level
+
+5. Opportunities and Risks
+List opportunities and risks.
+
+Categorize them into:
+
+* Short term
+* Medium term
+* Long term
+
+6. Scenario Planning
+Build three scenarios:
+
+* Optimistic Scenario
+* Realistic Scenario
+* Challenging Scenario
+
+For each scenario, explain:
+
+* How it could happen
+* Implications for the organization
+* Key risks
+* Key opportunities
+
+7. Backcasting
+Select the most realistic scenario and work backward from that future to the actions that should start today.
+
+8. Strategic Recommendations
+Recommend actions by phase:
+
+* Immediate
+* Short Term
+* Medium Term
+* Long Term
+
+For each recommendation, state:
+
+* Rationale
+* Benefits
+* Risks
+* Prerequisites
+
+9. Confidence Assessment
+For each recommendation, state the confidence level:
+
+* High Confidence
+* Medium Confidence
+* Low Confidence
+
+Explain the reason for the confidence assessment.
+
+10. Assumptions and Evidence
+State:
+
+* Assumptions used
+* Parts supported by current trends
+* Parts that are hypotheses
+* Parts that are still speculative
+* References or evidence types needed to validate the recommendations
+
+Response rules:
+
+* Do not make absolute predictions.
+* Distinguish facts, trends, hypotheses, and speculation.
+* Do not provide generic recommendations.
+* Explain the logic behind every recommendation.
+* If information is insufficient, state that clearly.
+* Use professional, practical, and easy-to-understand language.
+* Make the answer suitable for strategic discussion or management presentation.`
+        }
+      },
+      {
+        id: 'strategic-thinking',
+        framework: 'strategy',
+        keywords: ['strategy', 'prioritization', 'trade-offs', 'objectives', 'execution'],
+        bm: {
+          title: 'Strategic Thinking Meta-Prompt',
+          description: 'Membantu AI menilai isu melalui objektif, pilihan strategik, trade-off, keutamaan dan pelaksanaan.',
+          bestFor: 'Perancangan strategik, penetapan keutamaan, pilihan dasar, keputusan pengurusan dan penjajaran inisiatif.',
+          prompt: `Anda ialah Strategic Advisor dan Decision Strategist.
+
+Analisis topik berikut menggunakan strategic thinking. Jangan terus memberi jawapan akhir. Mulakan dengan memahami matlamat, konteks, kekangan dan pilihan yang tersedia.
+
+Input pengguna:
+Topik: [Masukkan topik]
+Objektif: [Masukkan objektif]
+Pihak berkepentingan: [Masukkan pihak berkepentingan]
+Kekangan: [Masukkan kekangan]
+Tempoh masa: [Masukkan tempoh masa]
+
+Struktur analisis:
+1. Ringkasan situasi
+2. Objektif strategik
+3. Isu utama dan punca
+4. Pilihan strategik
+5. Trade-off setiap pilihan
+6. Risiko dan mitigasi
+7. Keutamaan tindakan
+8. Cadangan akhir dengan rasional
+
+Peraturan:
+* Bezakan cadangan jangka pendek dan jangka panjang.
+* Jangan beri cadangan generik.
+* Terangkan sebab di sebalik setiap pilihan.
+* Nyatakan andaian dan maklumat yang masih diperlukan.`
+        },
+        en: {
+          title: 'Strategic Thinking Meta-Prompt',
+          description: 'Helps AI evaluate issues through objectives, strategic options, trade-offs, priorities, and execution.',
+          bestFor: 'Strategic planning, prioritization, policy options, management decisions, and initiative alignment.',
+          prompt: `You are a Strategic Advisor and Decision Strategist.
+
+Analyze the following topic using strategic thinking. Do not jump directly to the final answer. Start by understanding goals, context, constraints, and available options.
+
+User input:
+Topic: [Enter topic]
+Objective: [Enter objective]
+Stakeholders: [Enter stakeholders]
+Constraints: [Enter constraints]
+Timeframe: [Enter timeframe]
+
+Analysis structure:
+1. Situation summary
+2. Strategic objectives
+3. Key issues and root causes
+4. Strategic options
+5. Trade-offs for each option
+6. Risks and mitigation
+7. Action priorities
+8. Final recommendation with rationale
+
+Rules:
+* Distinguish short-term and long-term recommendations.
+* Do not provide generic advice.
+* Explain the reasoning behind each option.
+* State assumptions and missing information.`
+        }
+      },
+      {
+        id: 'systems-thinking',
+        framework: 'systems',
+        keywords: ['systems', 'feedback loops', 'stakeholders', 'dependencies', 'root causes'],
+        bm: {
+          title: 'Systems Thinking Meta-Prompt',
+          description: 'Membantu AI melihat isu sebagai sistem yang mempunyai hubungan, maklum balas, punca struktur dan kesan sampingan.',
+          bestFor: 'Masalah kompleks, reformasi proses, perubahan organisasi, dasar awam, operasi dan isu merentas jabatan.',
+          prompt: `Anda ialah Systems Thinking Analyst.
+
+Analisis isu berikut sebagai satu sistem. Jangan hanya senaraikan simptom. Kenal pasti hubungan, punca struktur, maklum balas dan kesan tidak dijangka.
+
+Input pengguna:
+Isu: [Masukkan isu]
+Konteks: [Masukkan konteks]
+Pihak terlibat: [Masukkan pihak terlibat]
+Objektif perubahan: [Masukkan objektif]
+
+Struktur analisis:
+1. Peta sistem ringkas
+2. Pihak berkepentingan dan peranan
+3. Hubungan sebab-akibat
+4. Feedback loops
+5. Punca struktur
+6. Leverage points
+7. Risiko kesan sampingan
+8. Intervensi dicadangkan
+
+Peraturan:
+* Bezakan simptom, punca langsung dan punca struktur.
+* Nyatakan kebergantungan antara komponen.
+* Cadangkan intervensi yang mengubah sistem, bukan hanya membaiki simptom.`
+        },
+        en: {
+          title: 'Systems Thinking Meta-Prompt',
+          description: 'Helps AI view issues as systems with relationships, feedback, structural causes, and side effects.',
+          bestFor: 'Complex problems, process reform, organizational change, public policy, operations, and cross-department issues.',
+          prompt: `You are a Systems Thinking Analyst.
+
+Analyze the issue as a system. Do not only list symptoms. Identify relationships, structural causes, feedback loops, and unintended consequences.
+
+User input:
+Issue: [Enter issue]
+Context: [Enter context]
+Actors involved: [Enter actors]
+Change objective: [Enter objective]
+
+Analysis structure:
+1. Simple system map
+2. Stakeholders and roles
+3. Cause-and-effect relationships
+4. Feedback loops
+5. Structural causes
+6. Leverage points
+7. Risk of side effects
+8. Recommended interventions
+
+Rules:
+* Distinguish symptoms, direct causes, and structural causes.
+* State dependencies between components.
+* Recommend interventions that change the system, not only treat symptoms.`
+        }
+      },
+      {
+        id: 'critical-thinking',
+        framework: 'critical',
+        keywords: ['critical thinking', 'assumptions', 'bias', 'evidence', 'logic'],
+        bm: {
+          title: 'Critical Thinking Meta-Prompt',
+          description: 'Membantu AI menyemak hujah, andaian, bukti, bias, kelemahan logik dan alternatif tafsiran.',
+          bestFor: 'Semakan cadangan, analisis risiko keputusan, penilaian memo, hujah dasar, laporan dan bahan pembentangan.',
+          prompt: `Anda ialah Critical Thinking Reviewer.
+
+Nilai topik, cadangan atau hujah berikut secara kritikal. Jangan hanya bersetuju. Uji logik, bukti, andaian dan risiko bias.
+
+Input pengguna:
+Bahan untuk disemak: [Masukkan bahan]
+Tujuan bahan: [Masukkan tujuan]
+Audiens: [Masukkan audiens]
+Keputusan yang perlu dibuat: [Masukkan keputusan]
+
+Struktur analisis:
+1. Ringkasan hujah utama
+2. Andaian tersurat dan tersirat
+3. Kekuatan bukti
+4. Kelemahan logik
+5. Bias atau blind spots
+6. Alternatif tafsiran
+7. Soalan semakan penting
+8. Versi cadangan yang lebih kukuh
+
+Peraturan:
+* Bezakan fakta, pendapat dan andaian.
+* Jangan menyerang gaya semata-mata; fokus pada kualiti pemikiran.
+* Beri cadangan pembaikan yang khusus.`
+        },
+        en: {
+          title: 'Critical Thinking Meta-Prompt',
+          description: 'Helps AI review arguments, assumptions, evidence, bias, logical weaknesses, and alternative interpretations.',
+          bestFor: 'Reviewing proposals, decision risks, memos, policy arguments, reports, and presentation materials.',
+          prompt: `You are a Critical Thinking Reviewer.
+
+Evaluate the following topic, proposal, or argument critically. Do not simply agree. Test the logic, evidence, assumptions, and risk of bias.
+
+User input:
+Material to review: [Enter material]
+Purpose: [Enter purpose]
+Audience: [Enter audience]
+Decision to be made: [Enter decision]
+
+Analysis structure:
+1. Summary of the main argument
+2. Explicit and implicit assumptions
+3. Strength of evidence
+4. Logical weaknesses
+5. Biases or blind spots
+6. Alternative interpretations
+7. Important review questions
+8. Stronger revised recommendation
+
+Rules:
+* Distinguish facts, opinions, and assumptions.
+* Do not focus only on writing style; focus on thinking quality.
+* Provide specific improvement suggestions.`
+        }
+      },
+      {
+        id: 'design-thinking',
+        framework: 'design',
+        keywords: ['design thinking', 'users', 'empathy', 'prototype', 'journey'],
+        bm: {
+          title: 'Design Thinking Meta-Prompt',
+          description: 'Membantu AI memahami pengguna, mentakrif masalah, mencetus idea, mencadangkan prototaip dan ujian.',
+          bestFor: 'Reka bentuk perkhidmatan, inovasi produk, pengalaman pengguna, penambahbaikan proses dan program latihan.',
+          prompt: `Anda ialah Design Thinking Facilitator dan Service Designer.
+
+Gunakan design thinking untuk menganalisis cabaran berikut. Fokus kepada keperluan pengguna, bukan hanya kehendak organisasi.
+
+Input pengguna:
+Cabaran: [Masukkan cabaran]
+Pengguna sasaran: [Masukkan pengguna]
+Konteks penggunaan: [Masukkan konteks]
+Matlamat: [Masukkan matlamat]
+Kekangan: [Masukkan kekangan]
+
+Struktur analisis:
+1. Empathy insights
+2. User needs dan pain points
+3. Problem statement
+4. Idea penyelesaian
+5. Konsep prototaip
+6. Cara menguji prototaip
+7. Metrik kejayaan
+8. Risiko pelaksanaan
+
+Peraturan:
+* Jangan anggap semua pengguna sama.
+* Nyatakan soalan penyelidikan pengguna yang perlu dijawab.
+* Cadangkan langkah kecil yang boleh diuji dahulu.`
+        },
+        en: {
+          title: 'Design Thinking Meta-Prompt',
+          description: 'Helps AI understand users, define problems, generate ideas, suggest prototypes, and plan tests.',
+          bestFor: 'Service design, product innovation, user experience, process improvement, and training programs.',
+          prompt: `You are a Design Thinking Facilitator and Service Designer.
+
+Use design thinking to analyze the following challenge. Focus on user needs, not only organizational preferences.
+
+User input:
+Challenge: [Enter challenge]
+Target users: [Enter users]
+Use context: [Enter context]
+Goal: [Enter goal]
+Constraints: [Enter constraints]
+
+Analysis structure:
+1. Empathy insights
+2. User needs and pain points
+3. Problem statement
+4. Solution ideas
+5. Prototype concept
+6. How to test the prototype
+7. Success metrics
+8. Implementation risks
+
+Rules:
+* Do not assume all users are the same.
+* State user research questions that should be answered.
+* Recommend small steps that can be tested first.`
+        }
+      },
+      {
+        id: 'first-principles-thinking',
+        framework: 'strategy',
+        keywords: ['first principles', 'assumptions', 'fundamentals', 'rebuild', 'constraints'],
+        bm: {
+          title: 'First Principles Thinking Meta-Prompt',
+          description: 'Membantu AI memecahkan masalah kepada prinsip asas, mencabar andaian dan membina penyelesaian dari bawah.',
+          bestFor: 'Inovasi, reka bentuk semula proses, strategi teknologi, pengurangan kos, keputusan kompleks dan penyelesaian baharu.',
+          prompt: `Anda ialah First Principles Thinking Coach.
+
+Analisis masalah berikut dengan memecahkannya kepada kebenaran asas. Jangan bermula dengan amalan biasa atau penyelesaian lazim.
+
+Input pengguna:
+Masalah: [Masukkan masalah]
+Matlamat: [Masukkan matlamat]
+Kekangan: [Masukkan kekangan]
+Penyelesaian sedia ada: [Masukkan penyelesaian sedia ada]
+
+Struktur analisis:
+1. Masalah sebenar
+2. Andaian yang perlu dicabar
+3. Fakta asas yang diketahui
+4. Kekangan sebenar berbanding kekangan andaian
+5. Penyelesaian dibina dari prinsip asas
+6. Pilihan yang paling praktikal
+7. Eksperimen kecil untuk menguji idea
+
+Peraturan:
+* Jangan bergantung kepada "cara biasa dibuat".
+* Bezakan fakta asas dan andaian operasi.
+* Cadangkan pendekatan yang boleh diuji secara kecil dahulu.`
+        },
+        en: {
+          title: 'First Principles Thinking Meta-Prompt',
+          description: 'Helps AI break problems into fundamentals, challenge assumptions, and rebuild solutions from the ground up.',
+          bestFor: 'Innovation, process redesign, technology strategy, cost reduction, complex decisions, and new solutions.',
+          prompt: `You are a First Principles Thinking Coach.
+
+Analyze the problem by breaking it down into fundamental truths. Do not start from common practice or conventional solutions.
+
+User input:
+Problem: [Enter problem]
+Goal: [Enter goal]
+Constraints: [Enter constraints]
+Existing solutions: [Enter existing solutions]
+
+Analysis structure:
+1. The real problem
+2. Assumptions to challenge
+3. Fundamental facts known
+4. Real constraints versus assumed constraints
+5. Solutions built from first principles
+6. Most practical option
+7. Small experiment to test the idea
+
+Rules:
+* Do not rely on "how it is usually done".
+* Distinguish fundamental facts from operating assumptions.
+* Recommend an approach that can be tested at small scale first.`
+        }
+      },
+      {
+        id: 'scientific-thinking',
+        framework: 'scientific',
+        keywords: ['scientific thinking', 'hypothesis', 'evidence', 'experiment', 'validation'],
+        bm: {
+          title: 'Scientific Thinking Meta-Prompt',
+          description: 'Membantu AI membina hipotesis, mengenal pasti bukti, mencadangkan ujian dan menilai tahap keyakinan.',
+          bestFor: 'Kajian, eksperimen dasar, pilot program, penilaian impak, validasi produk dan keputusan berasaskan bukti.',
+          prompt: `Anda ialah Scientific Thinking Advisor dan Evidence-Based Decision Analyst.
+
+Analisis topik berikut menggunakan pemikiran saintifik. Bina hipotesis, tentukan bukti yang diperlukan dan cadangkan cara menguji.
+
+Input pengguna:
+Topik / persoalan: [Masukkan topik]
+Hipotesis awal: [Masukkan hipotesis jika ada]
+Data tersedia: [Masukkan data]
+Keputusan yang perlu dibuat: [Masukkan keputusan]
+
+Struktur analisis:
+1. Persoalan utama
+2. Hipotesis yang boleh diuji
+3. Bukti yang tersedia
+4. Bukti yang masih diperlukan
+5. Reka bentuk ujian atau eksperimen
+6. Metrik dan kaedah pengukuran
+7. Risiko bias dan pemboleh ubah mengelirukan
+8. Tafsiran hasil yang mungkin
+9. Tahap keyakinan dan langkah seterusnya
+
+Peraturan:
+* Jangan anggap korelasi sebagai sebab-akibat.
+* Bezakan data, inferens dan hipotesis.
+* Cadangkan ujian yang praktikal dan beretika.`
+        },
+        en: {
+          title: 'Scientific Thinking Meta-Prompt',
+          description: 'Helps AI build hypotheses, identify evidence, suggest tests, and assess confidence levels.',
+          bestFor: 'Research, policy experiments, pilot programs, impact evaluation, product validation, and evidence-based decisions.',
+          prompt: `You are a Scientific Thinking Advisor and Evidence-Based Decision Analyst.
+
+Analyze the topic using scientific thinking. Build hypotheses, define the evidence needed, and recommend how to test them.
+
+User input:
+Topic / question: [Enter topic]
+Initial hypothesis: [Enter hypothesis if any]
+Available data: [Enter data]
+Decision to be made: [Enter decision]
+
+Analysis structure:
+1. Main question
+2. Testable hypotheses
+3. Available evidence
+4. Evidence still needed
+5. Test or experiment design
+6. Metrics and measurement method
+7. Bias risks and confounding variables
+8. Possible interpretations of results
+9. Confidence level and next steps
+
+Rules:
+* Do not treat correlation as causation.
+* Distinguish data, inference, and hypothesis.
+* Recommend tests that are practical and ethical.`
+        }
+      }
+    ];
+
     const reviewTools = [
       {
         id: 'basic',
@@ -1825,6 +2756,9 @@
     let currentSearch = '';
     let currentCategory = 'all';
     let currentStyle = 'all';
+    let currentMetaSearch = '';
+    let currentMetaFramework = 'all';
+    let activeMetaPromptId = '';
     let toastTimer;
 
     const $ = (id) => document.getElementById(id);
@@ -1880,6 +2814,13 @@
       setText('resetFilters', copy.resetFilters);
       setText('totalCount', copy.totalTemplates(templates.length));
       setText('emptyState', copy.noResults);
+      setText('metaKicker', copy.metaKicker);
+      setText('metaTitle', copy.metaTitle);
+      setText('metaIntro', copy.metaIntro);
+      setText('metaNote', copy.metaNote);
+      setText('metaSearchLabel', copy.metaSearchLabel);
+      setText('metaTotalCount', copy.metaTotalCount(metaPrompts.length));
+      setText('metaEmptyState', copy.metaNoResults);
       setText('reviewKicker', copy.reviewKicker);
       setText('reviewTitle', copy.reviewTitle);
       setText('reviewIntro', copy.reviewIntro);
@@ -1890,6 +2831,13 @@
       setText('footerYear', copy.year(new Date().getFullYear()));
       $('searchInput').placeholder = copy.searchPlaceholder;
       $('searchInput').value = currentSearch;
+      $('metaSearchInput').placeholder = copy.metaSearchPlaceholder;
+      $('metaSearchInput').value = currentMetaSearch;
+      $('metaTooltip').setAttribute('data-tooltip', copy.metaTooltip);
+      $('metaTooltip').setAttribute('aria-label', copy.metaTooltip);
+      setText('closeMetaModal', copy.close);
+      setText('modalClosePrompt', copy.close);
+      setText('modalCopyPrompt', copy.labels.copy);
     }
 
     function renderNav() {
@@ -2006,6 +2954,112 @@
       if (window.location.hash !== nextHash) {
         history.replaceState(null, '', nextHash);
       }
+    }
+
+    function frameworkName(id) {
+      const item = metaFrameworks.find((framework) => framework.id === id);
+      return item ? item[currentLang] : id;
+    }
+
+    function renderMetaTabs() {
+      const copy = t();
+      $('metaTabs').innerHTML = metaFrameworks.map((framework) => {
+        const label = framework.id === 'all' ? copy.metaAll : framework[currentLang];
+        const active = framework.id === currentMetaFramework;
+        return `<button class="filter-tab${active ? ' active' : ''}" type="button" data-framework="${framework.id}" role="tab" aria-selected="${active}">${label}</button>`;
+      }).join('');
+
+      $('metaTabs').querySelectorAll('.filter-tab').forEach((button) => {
+        button.addEventListener('click', () => {
+          currentMetaFramework = button.dataset.framework;
+          renderMetaPrompts();
+        });
+      });
+    }
+
+    function metaPromptCardHtml(item) {
+      const copy = t();
+      const data = item[currentLang];
+      return `
+        <article class="meta-prompt-card" data-id="${item.id}">
+          <div class="meta-prompt-card-inner">
+            <div class="badge-row">
+              <span class="badge framework-badge">Thinking Framework</span>
+              <span class="badge style-badge">${escapeHtml(frameworkName(item.framework))}</span>
+            </div>
+            <h3>${escapeHtml(data.title)}</h3>
+            <div class="meta-block"><span class="meta-label">${copy.labels.purpose}</span><p>${escapeHtml(data.description)}</p></div>
+            <div class="meta-block"><span class="meta-label">${copy.labels.bestFor}</span><p>${escapeHtml(data.bestFor)}</p></div>
+            <div class="prompt-actions">
+              <button class="mini-btn view-meta-prompt" type="button" data-meta-id="${item.id}">${copy.viewPrompt}</button>
+              <button class="mini-btn secondary copy-meta-prompt" type="button" data-meta-id="${item.id}">${copy.labels.copy}</button>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderMetaPrompts() {
+      const query = currentMetaSearch.trim().toLowerCase();
+      const filtered = metaPrompts.filter((item) => {
+        const data = item[currentLang];
+        const haystack = [
+          data.title,
+          data.description,
+          data.bestFor,
+          data.prompt,
+          frameworkName(item.framework),
+          item.keywords.join(' ')
+        ].join(' ').toLowerCase();
+        const matchesSearch = !query || haystack.includes(query);
+        const matchesFramework = currentMetaFramework === 'all' || item.framework === currentMetaFramework;
+        return matchesSearch && matchesFramework;
+      });
+
+      $('metaPromptGrid').innerHTML = filtered.map((item) => metaPromptCardHtml(item)).join('');
+      $('metaResultCount').textContent = t().metaResultCount(filtered.length);
+      $('metaEmptyState').classList.toggle('visible', filtered.length === 0);
+      renderMetaTabs();
+      wireMetaPromptButtons();
+    }
+
+    function findMetaPrompt(id) {
+      return metaPrompts.find((item) => item.id === id);
+    }
+
+    function openMetaPrompt(id) {
+      const item = findMetaPrompt(id);
+      if (!item) return;
+      activeMetaPromptId = id;
+      const data = item[currentLang];
+      $('modalPromptType').textContent = `Thinking Framework / ${frameworkName(item.framework)}`;
+      $('modalPromptTitle').textContent = data.title;
+      $('modalPromptBody').textContent = data.prompt;
+      $('metaPromptModal').classList.add('visible');
+      document.body.classList.add('menu-open');
+      $('closeMetaModal').focus();
+    }
+
+    function closeMetaPrompt() {
+      $('metaPromptModal').classList.remove('visible');
+      document.body.classList.remove('menu-open');
+      activeMetaPromptId = '';
+    }
+
+    function copyMetaPrompt(id, button) {
+      const item = findMetaPrompt(id);
+      if (!item) return;
+      copyPrompt(item[currentLang].prompt, button);
+    }
+
+    function wireMetaPromptButtons() {
+      $('metaPromptGrid').querySelectorAll('.view-meta-prompt').forEach((button) => {
+        button.addEventListener('click', () => openMetaPrompt(button.dataset.metaId));
+      });
+
+      $('metaPromptGrid').querySelectorAll('.copy-meta-prompt').forEach((button) => {
+        button.addEventListener('click', () => copyMetaPrompt(button.dataset.metaId, button));
+      });
     }
 
     function cardHtml(item, type = 'template') {
@@ -2221,6 +3275,7 @@
       renderCategoryFilter();
       renderStyleFilter();
       renderTemplates();
+      renderMetaPrompts();
       renderReviewTools();
     }
 
@@ -2242,6 +3297,11 @@
       renderTemplates();
     });
 
+    $('metaSearchInput').addEventListener('input', (event) => {
+      currentMetaSearch = event.target.value;
+      renderMetaPrompts();
+    });
+
     $('resetFilters').addEventListener('click', () => {
       currentSearch = '';
       currentCategory = 'all';
@@ -2261,6 +3321,18 @@
       const open = $('navLinks').classList.toggle('open');
       $('mobileToggle').setAttribute('aria-expanded', String(open));
       document.body.classList.toggle('menu-open', open);
+    });
+
+    $('closeMetaModal').addEventListener('click', closeMetaPrompt);
+    $('modalClosePrompt').addEventListener('click', closeMetaPrompt);
+    $('modalCopyPrompt').addEventListener('click', () => copyMetaPrompt(activeMetaPromptId, $('modalCopyPrompt')));
+    $('metaPromptModal').addEventListener('click', (event) => {
+      if (event.target === $('metaPromptModal')) closeMetaPrompt();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && $('metaPromptModal').classList.contains('visible')) {
+        closeMetaPrompt();
+      }
     });
 
     readFilterStateFromUrl();
